@@ -1,0 +1,17 @@
+- Experimento em que ficamos 1h observando um sapo macho em seu sitio de reprodução e anotamos em quanto tempo fêmeas entram nesse sítio.
+
+- Estamos interessados em entender quais comportamentos do macho são mais sexys, controlando para variáveis ambientais.
+
+- Esperamos que isso possa ser modelado como uma gama (mais de uma fêmea) ou uma exponencial (apenas uma fêmea).
+
+- Como variáveis preditoras, pensamos em:
+
+** Variaveis de interesse (efeitos fixos)
+* Frequencia do canto (H: mais grave = mais femeas)
+* Presença de espinhos (H: presente = mais femeas)
+* Tamanho do corpo (H: maior mais fêmeas)
+* Taxa de canto (H: mais vezes = mais fêmeas)
+
+** Variaveis para controlar (aleatórias)
+* Pluviosidade (H: mais chuvoso = mais fêmeas)
+* Temperatura (H: mais quente = mais fêmeas)

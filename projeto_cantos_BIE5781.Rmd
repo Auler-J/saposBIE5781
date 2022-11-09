@@ -1,0 +1,152 @@
+---
+title: "Efeitos de sinais multimodais ao tempo até o início do amplexo: um estudo de simulação"
+author: "Daniel YM Nakamura e Jennifer P Auler"
+date: '2022-11-08'
+output: html_document
+editor_options: 
+  chunk_output_type: console
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+# 1. Introdução
+
+Em anuros, o canto de anúncio é aquele emitido por machos para atrair fêmeas ou repelir machos competidores na paisagem acústica (Wells 1977). Na espécie *Hylodes asper* (Anura: Hylodidae), machos de anuros geralmente são sedentários e esperam até as fêmeas chegarem nos sítios reprodutivos (superfícies de rochas próximas a rios ou cachoeira). A maioria dos estudos utiliza aspectos temporais (e.g. taxa de cantos) ou espectrais (i.e. o quão agudo ou grave o canto é) como variáveis respostas de modelos. Contudo, o tempo em que as fêmeas demoram para chegar nos sítios reprodutivos e iniciarem o amplexo é pouco estudado.
+
+Existem sinais multimodais compostos por características morfológicas, acústicas e visuais que são consideradas mais atrativas pelas fêmeas e podem explicar o tempo até sua chegada e início do amplexo. Por exemplo, é possível que machos que cantem a uma **taxa de notas** mais alta (maior número de notas por unidade de tempo) sejam mais atrativos e reduzam o tempo até o amplexo, pois uma taxa maior indica um maior gasto de energia e uma maior exposição a predadores, o que pode indicar um sinal honesto da qualidade do macho. Outra possível preditora acústica é a **frequência dominante** do canto, no qual cantos mais graves são considerados mais atrativos e talvez reduzam o tempo até o início do amplexo, pois machos com canto mais grave geralmente tem cordas vocais mais grossas e compridas, o que geralmente é um sinal honesto que informa o tamanho corporal do macho. Contudo, existem machos que mentem! Machos mentirosos são comuns em algumas espécies, os quais conseguem modular a frequência do canto (deixar mais grave por relaxamento dos músculos da cartilagem aritenóide). Por isso, incluir o **tamanho corporal** como uma variável preditora é uma forma de avaliar a honestidade da frequência. Por fim, machos da espécie *Hylodes asper* às vezes cantam ao mesmo tempo em que apresentam um display visual chamado *foot-flagging*, no qual esticam as pernas para chamarem atenção das fêmeas visualmente devido ao barulho das corredeiras que podem reduzir as chances de serem escutados pelas fêmeas. Portanto, uma última hipótese é que uma taxa de foot-flagging alta reduza o tempo até as fêmeas iniciarem o amplexo.
+
+![](./fig1.png)
+
+# 2. Material e métodos
+
+## 2.1 Simulação de dados
+
+```{r ass.function}
+posicao = function(esc){
+  if(!any(espaco == esc, na.rm = TRUE)){
+    stop("nao existe esse sapo no espaco")
+  }
+  posesc = which(espaco == esc)
+  inicol = seq(1, area^2, by = area)
+  fimcol = seq(area, area^2, by = area)
+  whcol = posesc >= inicol & posesc <= fimcol
+  col = which(whcol == TRUE)
+  
+  row = posesc - area*(col-1)
+  res = c(row, col)
+  names(res) = c("y.row", "x.col")
+  return(res)
+}
+
+dist = function(posf, posesc){
+  xf = posf[2]
+  yf = posf[1]
+  xm = posesc[2]
+  ym = posesc[1]
+ d = sqrt((xm - xf)^2 + (ym - yf)^2)
+ return(unname(d))
+}
+```
+
+
+```{r parametros}
+area = 10
+nmacho=10
+
+#coeficientes
+cffreq = 0.0011
+cftama = 0.0003
+cffoot = 1.1104
+```
+
+
+Espaço é uma matriz de \code{area} linhas e \code{area} colunas. 
+
+```{r simulacao}
+#set.seed(1)
+###############################################
+############ INICIO FOR EXTERNO ###############
+###############################################
+
+#### Conformacao inicial do espaco ####
+# Simula espaço contendo areaXarea grids
+espaco = matrix(NA, ncol = area, nrow = area)
+dimnames(espaco) = list(paste("L", 1:area), paste("C", 1:area))
+
+# Simula spawn de 10 machos
+xmacho = sample(1:area, nmacho)
+ymacho = sample(1:area, nmacho)
+
+for(i in 1:nmacho){
+espaco[ymacho[i],xmacho[i]] = paste0("m", i)
+}
+
+focal = sample(paste0("m", 1:nmacho), 1)
+
+#### Probabilidade de escolha dos machos ####
+dados = data.frame(nmacho = paste0("m", 1:nmacho), dcach = NA, prob = NA, foot = NA, freq = NA, tama = NA, distf = NA, ttot = NA)
+
+##### simula caracteristicas dos machos #####
+dados$dcach = area-xmacho
+
+mfoot = 10 + dados$dcach*(-0.5)
+mfoot[mfoot<0] = 0
+
+sfreq = dados$dcach*(10*(1/area))
+mfreq = 2000 - mean(sfreq) +sfreq
+
+stama = dados$dcach*(0.5*(1/area))
+mtama = 40.4 - mean(stama) + stama
+
+dados$foot = rpois(nmacho, lambda = mfoot)
+dados$freq = rnorm(nmacho, mean = mfreq, sd = 100)
+dados$tama = rnorm(nmacho, mean = mtama, sd = 2)
+
+
+
+##### logistica #####
+
+exprlin = cftama*dados$tama + cffoot*dados$foot + cffreq*dados$freq
+dados$prob = exp(exprlin)/ (1+exp(exprlin))
+dados$prob
+
+mdisp = dados$nmacho
+mindisp = NA
+
+####################################################
+################ INICIO FOR INTERNO ################
+####################################################
+
+for(j in 1:nmacho){
+
+# Simula spawn de 1 femea
+xfemea = sample(1:area, 1)
+yfemea = sample(1:area, 1)
+
+#checa se cedula esta ocupada
+while(!is.na(espaco[yfemea,xfemea])){
+  xfemea = sample(1:area, 1)
+  yfemea = sample(1:area, 1)
+}
+espaco[yfemea,xfemea] = "f"
+
+#### Sorteando macho escolhido ####
+escolhido = sample(dados$nmacho[!mdisp %in% mindisp], 1, prob = dados$prob[!mdisp %in% mindisp])
+
+
+distf = dist(posicao("f"), posicao(escolhido))
+
+dados$distf[dados$nmacho == escolhido] = distf
+dados$ttot[dados$nmacho == escolhido] = sum(dados$distf, na.rm=TRUE)
+
+
+#### Voltando ao espaco inicial sem macho escolhido ####
+espaco[which(espaco == "f")] = NA
+espaco[which(espaco == escolhido)] = NA
+mindisp[j] = escolhido
+}
+dados
+```
+
