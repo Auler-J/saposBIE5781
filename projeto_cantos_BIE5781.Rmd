@@ -56,6 +56,8 @@ area = 10
 nmacho=10
 nsim = 10
 posf = data.frame(posx = NA, posy = NA, nfemea = NA)
+result = data.frame(nmacho = NA, dcach = NA, prob = NA, foot = NA, freq = NA, tama = NA, distf = NA, ttot = NA, nsim = NA, femea = NA)
+storepos = list(NA)
 
 #coeficientes
 cffreq = 0.00011
@@ -87,7 +89,7 @@ for(k in 1:nsim){
   espaco_orig = espaco
   
   #### Probabilidade de escolha dos machos ####
-  dados = data.frame(nmacho = paste0("m", 1:nmacho), dcach = NA, prob = NA, foot = NA, freq = NA, tama = NA, distf = NA, ttot = NA)
+  dados = data.frame(nmacho = paste0("m", 1:nmacho), dcach = NA, prob = NA, foot = NA, freq = NA, tama = NA, distf = NA, ttot = NA, nsim = NA)
   
   ##### simula caracteristicas dos machos #####
   dados$dcach = area-xmacho
@@ -138,14 +140,14 @@ for(k in 1:nsim){
     #### Sorteando macho escolhido ####
     escolhido = sample(mdisp, 1, prob = dados$prob[dados$nmacho %in% mdisp])
     
-    
+    #### salvando resultados ####
     distf = dist(posicao("f"), posicao(escolhido))
-    
     dados$distf[dados$nmacho == escolhido] = distf
     dados$ttot[dados$nmacho == escolhido] = sum(dados$distf, na.rm=TRUE)
-    
     femeas = paste0("f", c(paste0(0, 1:9), 10:nmacho))
     dados$femea[dados$nmacho == escolhido] = femeas[j]
+    dados$nsim = paste0("sim", k)
+    
     dados = dados[order(dados$femea),]
     
     #### Voltando ao espaco inicial sem macho escolhido ####
@@ -154,8 +156,15 @@ for(k in 1:nsim){
     mindisp[j] = escolhido
     mdisp = dados$nmacho[!dados$nmacho %in% mindisp]
   }
-  result[[k]] = list(dados, espaco_orig, posf)
+  result = rbind(result, dados)
+  storepos[[k]] =list(espaco_orig, posf)
 }
+result
+```
+
+# Analise dos resultados
+
+```{r}
 result
 ```
 
