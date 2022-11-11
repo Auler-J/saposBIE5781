@@ -159,12 +159,12 @@ for(k in 1:nsim){
   result = rbind(result, dados)
   storepos[[k]] =list(espaco_orig, posf)
 }
-result
+result$femeasim = paste(result$femea, result$nsim, sep = "_")
+result = result[-1,]
 ```
 
-# Analise dos resultados
+# 3. Analise dos resultados
 
 ```{r}
-result
 ```
 
