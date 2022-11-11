@@ -186,15 +186,27 @@ result = result[-1,]
 # Análise exploratória
 hist(result$ttot)
 plot(result$ttot ~ result$prob)
-plot(result$ttot ~ result$foot)
-plot(result$ttot ~ result$freq)
-plot(result$ttot ~ result$tama)
+plot(result$ttot ~ result$footpad)
+plot(result$ttot ~ result$freqpad)
+plot(result$ttot ~ result$tamapad)
 
-# Modelos
-glmer(ttot~tama + (1|nsim), family = Gamma, data=result)
-glmer(ttot~foot + (1|nsim), family = Gamma, data=result)
-glmer(ttot~freq + (1|nsim), family = Gamma, data=result)
-glmer(ttot~log(tama)+log(freq)+log(foot) + (1|nsim), family = Gamma, data=result)
-glm(ttot~log(tama)+log(freq)+log(foot), family = Gamma, data=result)
+# Modelos mistos generalizados
+glmm1 = glmer(ttot~tamapad*freqpad*footpad + (1|nsim), family = Gamma, data=result)
+glmm2 = glmer(ttot~tamapad+freqpad+footpad + tamapad:freqpad + freqpad:footpad +tamapad:footpad
+              + (1|nsim), family = Gamma, data=result)
+AICtab(glmm1, glmm2)  #melhor glmm e o modelo cheio com interacoes
+
+glmer(ttot~tamapad + (1|nsim), family = Gamma, data=result)
+glmer(ttot~footpad + (1|nsim), family = Gamma, data=result)
+glmer(ttot~freqpad + (1|nsim), family = Gamma, data=result)
+
+# Modelos generalizados
+glm1 = glm(ttot~tamapad*freqpad*footpad, family = Gamma, data=result)
+stepAIC(glm1) #melhor glm e o modelo cheio com interacoes
+
+#Comparacao de modelos
+AICtab(glmm1, glm1, base = TRUE)
+
+confint(glm1) < 0 & confint(glm1) > 0
 ```
 
