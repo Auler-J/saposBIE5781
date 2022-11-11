@@ -26,7 +26,7 @@ Existem sinais multimodais compostos por características morfológicas, acústi
 ```{r ass.function}
 posicao = function(esc){
   if(!any(espaco == esc, na.rm = TRUE)){
-    stop("nao existe esse sapo no espaco")
+    stop(paste0("nao existe o sapo <", esc, "> no espaco"))
   }
   posesc = which(espaco == esc)
   inicol = seq(1, area^2, by = area)
@@ -54,11 +54,13 @@ dist = function(posf, posesc){
 ```{r parametros}
 area = 10
 nmacho=10
+nsim = 10
+posf = data.frame(posx = NA, posy = NA, nfemea = NA)
 
 #coeficientes
-cffreq = 0.0011
-cftama = 0.0003
-cffoot = 1.1104
+cffreq = 0.00011
+cftama = 0.000003
+cffoot = 0.0001104
 ```
 
 
@@ -69,84 +71,91 @@ Espaço é uma matriz de \code{area} linhas e \code{area} colunas.
 ###############################################
 ############ INICIO FOR EXTERNO ###############
 ###############################################
-
-#### Conformacao inicial do espaco ####
-# Simula espaço contendo areaXarea grids
-espaco = matrix(NA, ncol = area, nrow = area)
-dimnames(espaco) = list(paste("L", 1:area), paste("C", 1:area))
-
-# Simula spawn de 10 machos
-xmacho = sample(1:area, nmacho)
-ymacho = sample(1:area, nmacho)
-
-for(i in 1:nmacho){
-espaco[ymacho[i],xmacho[i]] = paste0("m", i)
+for(k in 1:nsim){
+  #### Conformacao inicial do espaco ####
+  # Simula espaço contendo areaXarea grids
+  espaco = matrix(NA, ncol = area, nrow = area)
+  dimnames(espaco) = list(paste("L", 1:area), paste("C", 1:area))
+  
+  # Simula spawn de 10 machos
+  xmacho = sample(1:area, nmacho)
+  ymacho = sample(1:area, nmacho)
+  
+  for(i in 1:nmacho){
+    espaco[ymacho[i],xmacho[i]] = paste0("m", i)
+  }
+  espaco_orig = espaco
+  
+  #### Probabilidade de escolha dos machos ####
+  dados = data.frame(nmacho = paste0("m", 1:nmacho), dcach = NA, prob = NA, foot = NA, freq = NA, tama = NA, distf = NA, ttot = NA)
+  
+  ##### simula caracteristicas dos machos #####
+  dados$dcach = area-xmacho
+  
+  mfoot = 10 + dados$dcach*(-0.5)
+  mfoot[mfoot<0] = 0
+  
+  sfreq = dados$dcach*(10*(1/area))
+  mfreq = 2000 - mean(sfreq) +sfreq
+  
+  stama = dados$dcach*(0.5*(1/area))
+  mtama = 40.4 - mean(stama) + stama
+  
+  dados$foot = rpois(nmacho, lambda = mfoot)
+  dados$freq = rnorm(nmacho, mean = mfreq, sd = 200)
+  dados$tama = rnorm(nmacho, mean = mtama, sd = 2)
+  
+  
+  
+  ##### logistica #####
+  
+  exprlin = cftama*dados$tama + cffoot*dados$foot + cffreq*dados$freq
+  dados$prob = exp(exprlin)/ (1+exp(exprlin))
+  dados$prob
+  
+  mdisp = dados$nmacho
+  mindisp = NA
+  
+  ####################################################
+  ################ INICIO FOR INTERNO ################
+  ####################################################
+  
+  for(j in 1:nmacho){
+    
+    # Simula spawn de 1 femea
+    xfemea = sample(1:area, 1)
+    yfemea = sample(1:area, 1)
+    
+    posf[j,] = c(xfemea, yfemea, femeas[j])
+    
+    #checa se cedula esta ocupada
+    while(!is.na(espaco[yfemea,xfemea])){
+      xfemea = sample(1:area, 1)
+      yfemea = sample(1:area, 1)
+    }
+    espaco[yfemea,xfemea] = "f"
+    
+    #### Sorteando macho escolhido ####
+    escolhido = sample(mdisp, 1, prob = dados$prob[dados$nmacho %in% mdisp])
+    
+    
+    distf = dist(posicao("f"), posicao(escolhido))
+    
+    dados$distf[dados$nmacho == escolhido] = distf
+    dados$ttot[dados$nmacho == escolhido] = sum(dados$distf, na.rm=TRUE)
+    
+    femeas = paste0("f", c(paste0(0, 1:9), 10:nmacho))
+    dados$femea[dados$nmacho == escolhido] = femeas[j]
+    dados = dados[order(dados$femea),]
+    
+    #### Voltando ao espaco inicial sem macho escolhido ####
+    espaco[which(espaco == "f")] = NA
+    espaco[which(espaco == escolhido)] = NA
+    mindisp[j] = escolhido
+    mdisp = dados$nmacho[!dados$nmacho %in% mindisp]
+  }
+  result[[k]] = list(dados, espaco_orig, posf)
 }
-
-focal = sample(paste0("m", 1:nmacho), 1)
-
-#### Probabilidade de escolha dos machos ####
-dados = data.frame(nmacho = paste0("m", 1:nmacho), dcach = NA, prob = NA, foot = NA, freq = NA, tama = NA, distf = NA, ttot = NA)
-
-##### simula caracteristicas dos machos #####
-dados$dcach = area-xmacho
-
-mfoot = 10 + dados$dcach*(-0.5)
-mfoot[mfoot<0] = 0
-
-sfreq = dados$dcach*(10*(1/area))
-mfreq = 2000 - mean(sfreq) +sfreq
-
-stama = dados$dcach*(0.5*(1/area))
-mtama = 40.4 - mean(stama) + stama
-
-dados$foot = rpois(nmacho, lambda = mfoot)
-dados$freq = rnorm(nmacho, mean = mfreq, sd = 100)
-dados$tama = rnorm(nmacho, mean = mtama, sd = 2)
-
-
-
-##### logistica #####
-
-exprlin = cftama*dados$tama + cffoot*dados$foot + cffreq*dados$freq
-dados$prob = exp(exprlin)/ (1+exp(exprlin))
-dados$prob
-
-mdisp = dados$nmacho
-mindisp = NA
-
-####################################################
-################ INICIO FOR INTERNO ################
-####################################################
-
-for(j in 1:nmacho){
-
-# Simula spawn de 1 femea
-xfemea = sample(1:area, 1)
-yfemea = sample(1:area, 1)
-
-#checa se cedula esta ocupada
-while(!is.na(espaco[yfemea,xfemea])){
-  xfemea = sample(1:area, 1)
-  yfemea = sample(1:area, 1)
-}
-espaco[yfemea,xfemea] = "f"
-
-#### Sorteando macho escolhido ####
-escolhido = sample(dados$nmacho[!mdisp %in% mindisp], 1, prob = dados$prob[!mdisp %in% mindisp])
-
-
-distf = dist(posicao("f"), posicao(escolhido))
-
-dados$distf[dados$nmacho == escolhido] = distf
-dados$ttot[dados$nmacho == escolhido] = sum(dados$distf, na.rm=TRUE)
-
-
-#### Voltando ao espaco inicial sem macho escolhido ####
-espaco[which(espaco == "f")] = NA
-espaco[which(espaco == escolhido)] = NA
-mindisp[j] = escolhido
-}
-dados
+result
 ```
 
