@@ -48,21 +48,24 @@ dist = function(posf, posesc){
  d = sqrt((xm - xf)^2 + (ym - yf)^2)
  return(unname(d))
 }
+
+padroniza = function(x){
+  (x - mean(x))/sd(x)
+}
 ```
 
 
 ```{r parametros}
 area = 10
 nmacho=10
-nsim = 10
+nsim = 1000
 posf = data.frame(posx = NA, posy = NA, nfemea = NA)
-result = data.frame(nmacho = NA, dcach = NA, prob = NA, foot = NA, freq = NA, tama = NA, distf = NA, ttot = NA, nsim = NA, femea = NA)
 storepos = list(NA)
 
 #coeficientes
-cffreq = 0.00011
-cftama = 0.000003
-cffoot = 0.0001104
+cffreq = 1.05
+cftama = 0.5
+cffoot = 0.8
 ```
 
 
@@ -70,7 +73,8 @@ Espaço é uma matriz de \code{area} linhas e \code{area} colunas.
 
 ```{r simulacao}
 #set.seed(1)
-###############################################
+result = data.frame(nmacho = NA, dcach = NA, foot = NA, freq = NA, tama = NA, footpad = NA, freqpad = NA, tamapad = NA, exprlin = NA, prob = NA, distf = NA, ttot = NA, nsim = NA, femea = NA)
+#############################
 ############ INICIO FOR EXTERNO ###############
 ###############################################
 for(k in 1:nsim){
@@ -89,7 +93,7 @@ for(k in 1:nsim){
   espaco_orig = espaco
   
   #### Probabilidade de escolha dos machos ####
-  dados = data.frame(nmacho = paste0("m", 1:nmacho), dcach = NA, prob = NA, foot = NA, freq = NA, tama = NA, distf = NA, ttot = NA, nsim = NA)
+  dados = data.frame(nmacho = paste0("m", 1:nmacho), dcach = NA, foot = NA, freq = NA, tama = NA, footpad = NA, freqpad = NA, tamapad = NA, exprlin = NA, prob = NA, distf = NA, ttot = NA, nsim = NA)
   
   ##### simula caracteristicas dos machos #####
   dados$dcach = area-xmacho
@@ -107,12 +111,15 @@ for(k in 1:nsim){
   dados$freq = rnorm(nmacho, mean = mfreq, sd = 200)
   dados$tama = rnorm(nmacho, mean = mtama, sd = 2)
   
-  
+  dados$footpad = padroniza(dados$foot)
+  dados$tamapad = padroniza(dados$tama)  
+  dados$freqpad = padroniza(dados$freq)
   
   ##### logistica #####
   
-  exprlin = cftama*dados$tama + cffoot*dados$foot + cffreq*dados$freq
-  dados$prob = exp(exprlin)/ (1+exp(exprlin))
+  dados$exprlin = cftama*dados$tamapad + cffoot*dados$footpad + cffreq*dados$freqpad
+  dados$exprlin = dados$exprlin - mean(dados$exprlin)
+  dados$prob = exp(dados$exprlin)/ (1+exp(dados$exprlin))
   dados$prob
   
   mdisp = dados$nmacho
@@ -160,12 +167,34 @@ for(k in 1:nsim){
   result = rbind(result, dados)
   storepos[[k]] =list(espaco_orig, posf)
 }
-result$femeasim = paste(result$femea, result$nsim, sep = "_")
-result = result[-1,]
+result[1:50,]
+summary(result$prob)
+boxplot(result$prob)
+
 ```
 
 # 3. Analise dos resultados
 
 ```{r}
+library(lme4)
+
+result$femeasim = paste(result$femea, result$nsim, sep = "_")
+result = result[-1,]
+
+
+
+# Análise exploratória
+hist(result$ttot)
+plot(result$ttot ~ result$prob)
+plot(result$ttot ~ result$foot)
+plot(result$ttot ~ result$freq)
+plot(result$ttot ~ result$tama)
+
+# Modelos
+glmer(ttot~tama + (1|nsim), family = Gamma, data=result)
+glmer(ttot~foot + (1|nsim), family = Gamma, data=result)
+glmer(ttot~freq + (1|nsim), family = Gamma, data=result)
+glmer(ttot~log(tama)+log(freq)+log(foot) + (1|nsim), family = Gamma, data=result)
+glm(ttot~log(tama)+log(freq)+log(foot), family = Gamma, data=result)
 ```
 
