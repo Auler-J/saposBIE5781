@@ -12,7 +12,7 @@ knitr::opts_chunk$set(echo = TRUE)
 ```
 
 # 1. Introdução
-AAA
+
 Em anuros, o canto de anúncio é aquele emitido por machos para atrair fêmeas ou repelir machos competidores na paisagem acústica (Wells 1977). Na espécie *Hylodes asper* (Anura: Hylodidae), machos de anuros geralmente são sedentários e esperam até as fêmeas chegarem nos sítios reprodutivos (superfícies de rochas próximas a rios ou cachoeira). A maioria dos estudos utiliza aspectos temporais (e.g. taxa de cantos) ou espectrais (i.e. o quão agudo ou grave o canto é) como variáveis respostas de modelos. Contudo, o tempo em que as fêmeas demoram para chegar nos sítios reprodutivos e iniciarem o amplexo é pouco estudado.
 
 Existem sinais multimodais compostos por características morfológicas, acústicas e visuais que são consideradas mais atrativas pelas fêmeas e podem explicar o tempo até sua chegada e início do amplexo. Por exemplo, é possível que machos que cantem a uma **taxa de notas** mais alta (maior número de notas por unidade de tempo) sejam mais atrativos e reduzam o tempo até o amplexo, pois uma taxa maior indica um maior gasto de energia e uma maior exposição a predadores, o que pode indicar um sinal honesto da qualidade do macho. Outra possível preditora acústica é a **frequência dominante** do canto, no qual cantos mais graves são considerados mais atrativos e talvez reduzam o tempo até o início do amplexo, pois machos com canto mais grave geralmente tem cordas vocais mais grossas e compridas, o que geralmente é um sinal honesto que informa o tamanho corporal do macho. Contudo, existem machos que mentem! Machos mentirosos são comuns em algumas espécies, os quais conseguem modular a frequência do canto (deixar mais grave por relaxamento dos músculos da cartilagem aritenóide). Por isso, incluir o **tamanho corporal** como uma variável preditora é uma forma de avaliar a honestidade da frequência. Por fim, machos da espécie *Hylodes asper* às vezes cantam ao mesmo tempo em que apresentam um display visual chamado *foot-flagging*, no qual esticam as pernas para chamarem atenção das fêmeas visualmente devido ao barulho das corredeiras que podem reduzir as chances de serem escutados pelas fêmeas. Portanto, uma última hipótese é que uma taxa de foot-flagging alta reduza o tempo até as fêmeas iniciarem o amplexo.
@@ -128,6 +128,8 @@ for(k in 1:nsim){
     xfemea = sample(1:area, 1)
     yfemea = sample(1:area, 1)
     
+    
+    femeas = paste0("f", c(paste0(0, 1:9), 10:nmacho))
     posf[j,] = c(xfemea, yfemea, femeas[j])
     
     #checa se cedula esta ocupada
@@ -144,7 +146,6 @@ for(k in 1:nsim){
     distf = dist(posicao("f"), posicao(escolhido))
     dados$distf[dados$nmacho == escolhido] = distf
     dados$ttot[dados$nmacho == escolhido] = sum(dados$distf, na.rm=TRUE)
-    femeas = paste0("f", c(paste0(0, 1:9), 10:nmacho))
     dados$femea[dados$nmacho == escolhido] = femeas[j]
     dados$nsim = paste0("sim", k)
     
