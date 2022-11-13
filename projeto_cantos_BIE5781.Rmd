@@ -204,7 +204,7 @@ summary(sim1) # @rada, os valores fazem sentido??
 
 ```{r}
 library(lme4)
-
+library(MASS)
 
 # Análise exploratória
 hist(sim1$ttot)
@@ -214,14 +214,14 @@ plot(sim1$ttot ~ sim1$freqpad)
 plot(sim1$ttot ~ sim1$tamapad)
 
 # Modelos Mistos Generalizados
-glmm1 = glmer(ttot~tamapad*freqpad*footpad + (1|nsim), family = Gamma, data=sim1)
-glmm2 = glmer(ttot~tamapad+freqpad+footpad + tamapad:freqpad + freqpad:footpad +tamapad:footpad
-              + (1|nsim), family = Gamma, data=sim1)
+glmm1 = glmer(ttot~tamapad*freqpad*footpad*area + (1|nsim), family = Gamma, data=sim1)
+# glmm2 = glmer(ttot~tamapad+freqpad+footpad+area + tamapad:freqpad + freqpad:footpad +tamapad:footpad
+#              + (1|nsim), family = Gamma, data=sim1)
 AICtab(glmm1, glmm2)  #melhor glmm e o modelo cheio com interacoes
 
 
 # Modelos Generalizados
-glm1 = glm(ttot~tamapad*freqpad*footpad, family = Gamma, data=sim1)
+glm1 = glm(ttot~tamapad*freqpad*footpad*area, family = Gamma, data=sim1)
 stepAIC(glm1) #melhor glm e o modelo cheio com interacoes
 
 #Comparacao de modelos
