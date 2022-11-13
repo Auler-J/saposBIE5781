@@ -24,10 +24,11 @@ Existem sinais multimodais compostos por características morfológicas, acústi
 ## 2.1 Simulação de dados
 
 ```{r ass.function}
-posicao = function(esc){
+posicao = function(esc, espaco){
   if(!any(espaco == esc, na.rm = TRUE)){
     stop(paste0("nao existe o sapo <", esc, "> no espaco"))
   }
+  area = dim(espaco)[1]
   posesc = which(espaco == esc)
   inicol = seq(1, area^2, by = area)
   fimcol = seq(area, area^2, by = area)
@@ -56,11 +57,9 @@ padroniza = function(x){
 
 
 ```{r parametros}
-area = 10
-nmacho=10
-nsim = 1000
-posf = data.frame(posx = NA, posy = NA, nfemea = NA)
-storepos = list(NA)
+nsim = 10
+vecarea = round(runif(nsim, 10, 20), 0)
+vecnmacho= vecarea
 
 #coeficientes
 cffreq = 1.05
@@ -73,11 +72,28 @@ Espaço é uma matriz de \code{area} linhas e \code{area} colunas.
 
 ```{r simulacao}
 #set.seed(1)
-result = data.frame(nmacho = NA, dcach = NA, foot = NA, freq = NA, tama = NA, footpad = NA, freqpad = NA, tamapad = NA, exprlin = NA, prob = NA, distf = NA, ttot = NA, nsim = NA, femea = NA)
-#############################
+
+saposim = function(nsim = 1000, vecarea = round(runif(nsim, 10, 100), 0), vecnmacho= vecarea, cffreq = 1.05, cftama = 0.5, cffoot = 0.8){
+
+#checagem de input
+if(length(vecarea) != nsim){stop("vecarea deve ser um vetor de tamanho nsim")}
+if(length(vecnmacho) != nsim){stop("vecnmacho deve ser um vetor de tamanho nsim")}
+
+#Cria objetos que vao ser usados no for
+result = data.frame(machoid = NA, dcach = NA, foot = NA, freq = NA, tama = NA, footpad = NA, freqpad = NA, tamapad = NA, exprlin = NA, prob = NA, distf = NA, ttot = NA, nsim = NA, femea = NA, area = NA)
+posf = data.frame(posx = NA, posy = NA, nfemea = NA) #atualmente nao esta como output
+storepos = list(NA) #atualmente nao esta como output
+
+###############################################
 ############ INICIO FOR EXTERNO ###############
 ###############################################
+
 for(k in 1:nsim){
+  
+  #nmachos e area para esse espaco
+  nmacho = vecnmacho[k]
+  area = vecarea[k]
+  
   #### Conformacao inicial do espaco ####
   # Simula espaço contendo areaXarea grids
   espaco = matrix(NA, ncol = area, nrow = area)
@@ -93,7 +109,7 @@ for(k in 1:nsim){
   espaco_orig = espaco
   
   #### Probabilidade de escolha dos machos ####
-  dados = data.frame(nmacho = paste0("m", 1:nmacho), dcach = NA, foot = NA, freq = NA, tama = NA, footpad = NA, freqpad = NA, tamapad = NA, exprlin = NA, prob = NA, distf = NA, ttot = NA, nsim = NA)
+  dados = data.frame(machoid = paste0("m", 1:nmacho), dcach = NA, foot = NA, freq = NA, tama = NA, footpad = NA, freqpad = NA, tamapad = NA, exprlin = NA, prob = NA, distf = NA, ttot = NA, nsim = NA, femea = NA, area = NA)
   
   ##### simula caracteristicas dos machos #####
   dados$dcach = area-xmacho
@@ -122,7 +138,7 @@ for(k in 1:nsim){
   dados$prob = exp(dados$exprlin)/ (1+exp(dados$exprlin))
   dados$prob
   
-  mdisp = dados$nmacho
+  mdisp = dados$machoid
   mindisp = NA
   
   ####################################################
@@ -147,14 +163,15 @@ for(k in 1:nsim){
     espaco[yfemea,xfemea] = "f"
     
     #### Sorteando macho escolhido ####
-    escolhido = sample(mdisp, 1, prob = dados$prob[dados$nmacho %in% mdisp])
+    escolhido = sample(mdisp, 1, prob = dados$prob[dados$machoid %in% mdisp])
     
     #### salvando resultados ####
-    distf = dist(posicao("f"), posicao(escolhido))
-    dados$distf[dados$nmacho == escolhido] = distf
-    dados$ttot[dados$nmacho == escolhido] = sum(dados$distf, na.rm=TRUE)
-    dados$femea[dados$nmacho == escolhido] = femeas[j]
+    distf = dist(posicao("f", espaco), posicao(escolhido, espaco))
+    dados$distf[dados$machoid == escolhido] = distf
+    dados$ttot[dados$machoid == escolhido] = sum(dados$distf, na.rm=TRUE)
+    dados$femea[dados$machoid == escolhido] = femeas[j]
     dados$nsim = paste0("sim", k)
+    dados$area = area
     
     dados = dados[order(dados$femea),]
     
@@ -162,46 +179,49 @@ for(k in 1:nsim){
     espaco[which(espaco == "f")] = NA
     espaco[which(espaco == escolhido)] = NA
     mindisp[j] = escolhido
-    mdisp = dados$nmacho[!dados$nmacho %in% mindisp]
+    mdisp = dados$machoid[!dados$machoid %in% mindisp]
   }
   result = rbind(result, dados)
   storepos[[k]] =list(espaco_orig, posf)
 }
-result[1:50,]
-summary(result$prob)
-boxplot(result$prob)
-
+result = result[-1,]
+result$femeasim = paste(result$femea, result$nsim, sep = "_")
+row.names(result) = 1:length(result$area)
+return(result)
+}
 ```
 
-# 3. Analise dos resultados
+# 3. Simulação
+
+```{r}
+set.seed(1)
+sim1 = saposim()
+summary(sim1) # @rada, os valores fazem sentido??
+```
+
+
+# 4. Analise dos resultados
 
 ```{r}
 library(lme4)
 
-result$femeasim = paste(result$femea, result$nsim, sep = "_")
-result = result[-1,]
-
-
 
 # Análise exploratória
-hist(result$ttot)
-plot(result$ttot ~ result$prob)
-plot(result$ttot ~ result$footpad)
-plot(result$ttot ~ result$freqpad)
-plot(result$ttot ~ result$tamapad)
+hist(sim1$ttot)
+plot(sim1$ttot ~ sim1$prob)
+plot(sim1$ttot ~ sim1$footpad)
+plot(sim1$ttot ~ sim1$freqpad)
+plot(sim1$ttot ~ sim1$tamapad)
 
-# Modelos mistos generalizados
-glmm1 = glmer(ttot~tamapad*freqpad*footpad + (1|nsim), family = Gamma, data=result)
+# Modelos Mistos Generalizados
+glmm1 = glmer(ttot~tamapad*freqpad*footpad + (1|nsim), family = Gamma, data=sim1)
 glmm2 = glmer(ttot~tamapad+freqpad+footpad + tamapad:freqpad + freqpad:footpad +tamapad:footpad
-              + (1|nsim), family = Gamma, data=result)
+              + (1|nsim), family = Gamma, data=sim1)
 AICtab(glmm1, glmm2)  #melhor glmm e o modelo cheio com interacoes
 
-glmer(ttot~tamapad + (1|nsim), family = Gamma, data=result)
-glmer(ttot~footpad + (1|nsim), family = Gamma, data=result)
-glmer(ttot~freqpad + (1|nsim), family = Gamma, data=result)
 
-# Modelos generalizados
-glm1 = glm(ttot~tamapad*freqpad*footpad, family = Gamma, data=result)
+# Modelos Generalizados
+glm1 = glm(ttot~tamapad*freqpad*footpad, family = Gamma, data=sim1)
 stepAIC(glm1) #melhor glm e o modelo cheio com interacoes
 
 #Comparacao de modelos
