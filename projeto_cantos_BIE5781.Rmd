@@ -53,6 +53,12 @@ dist = function(posf, posesc){
 padroniza = function(x){
   (x - mean(x))/sd(x)
 }
+
+logit2prob <- function(logit){
+  odds <- exp(logit)
+  prob <- odds / (1 + odds)
+  return(prob)
+}
 ```
 
 
