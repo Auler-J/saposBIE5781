@@ -62,45 +62,57 @@ text(x = 4.15, y = 2.5, "distf = 7.3", col = "green", cex = 0.7)
 Figura X - Uma distribuição hipotética de machos (m1 a m10) e fêmea (F) no espaço. A probabilidade de seleção dos machos está representada pelo tamanho da fonte. Ao lado direito se encontra a cachoeira, que se correlaciona com a probabilidade de seleção. Neste exemplo, o macho "m10" foi escolhido e a sua distancia "distf" foi calculada. 
 
 # 3. Simulação
+O código das simulações está em "R/simula_dados.R".
 
 ```{r}
-set.seed(42)
-#sim1 = saposim(nsim = 10000)
-#save(sim1, file = "sim1.Rdata")
 load("data/sim1.Rdata")
+load("data/sim2.Rdata")
 summary(sim1) # @rada, os valores fazem sentido??
+summary(sim2)
 ```
 
 
 # 4. Analise dos resultados
 
+Pacotes utilizados
 ```{r}
 library(lme4)
 library(MASS)
+library(bbmle)
+```
 
-# Análise exploratória
+## 4.1 Análise exploratória
+```{r echo=FALSE}
 hist(sim1$ttot)
+par(mfrow = c(2,2))
 plot(sim1$ttot ~ sim1$prob)
 plot(sim1$ttot ~ sim1$footpad)
 plot(sim1$ttot ~ sim1$freqpad)
 plot(sim1$ttot ~ sim1$tamapad)
-
-# Modelos Mistos Generalizados
-glmm1 = glmer(ttot~tamapad*freqpad*footpad*area + (1|nsim), family = Gamma, data=sim1)
-# glmm2 = glmer(ttot~tamapad+freqpad+footpad+area + tamapad:freqpad + freqpad:footpad +tamapad:footpad
-#              + (1|nsim), family = Gamma, data=sim1)
-AICtab(glmm1, glmm2)  #melhor glmm e o modelo cheio com interacoes
-
-
-# Modelos Generalizados
-glm1 = glm(ttot~tamapad*freqpad*footpad*area, family = Gamma, data=sim1)
-stepAIC(glm1) #melhor glm e o modelo cheio com interacoes
-
-logit2prob(coef(glm1))
-
-#Comparacao de modelos
-AICtab(glmm1, glm1, base = TRUE)
-
-confint(glm1) < 0 & confint(glm1) > 0
+par(mfrow = c(1,1))
 ```
+
+## GLMM x GLM
+A principio, acreditamos que o GLMM é mais adequado para nossa estrutura de dados. No entanto, o modelo que gostaríamos de fazer não converge.
+```{r eval=FALSE}
+# O modelo full nao converge:
+
+glmmfull = glmer(ttot~tamapad*freqpad*footpad*I(area^2) + (1|nsim), family = Gamma, data=sim1)
+
+# Error in pwrssUpdate(pp, resp, tol = tolPwrss, GQmat = GQmat, compDev = compDev,  : 
+#   PIRLS loop resulted in NaN value
+```
+
+Por esse motivo, comparamos o modelo aleatório mais simples possível, apenas com a probabilidade de seleção dos machos. Pelo funcionamento da simulação, a variável \code{prob} deve abarcar toda a informação de \code{freq}, \code{foot} e \code{tama}. No entanto, essa probabilidade não é biologicamente plausível de ser coletada, e usamos aqui apenas para verificar a necessidade do uso do modelo misto.
+```{r}
+glmmP = glmer(ttot~prob + (1|nsim), family = Gamma, data=sim1)
+
+#Comparando o glmm com o glm:
+glmP = glm(ttot~prob, family = Gamma, data=sim1)
+
+#Nao da pra descartar o efeito aleatorio
+AICtab(glmmP, glmP)
+```
+
+O GLMM é infinitamente melhor que o GLM.
 
