@@ -81,7 +81,29 @@ library(MASS)
 library(bbmle)
 ```
 
-## 4.1 Análise exploratória
+## 4.1 Simulação com área fixa
+
+```{r echo=FALSE}
+hist(sim2$ttot)
+par(mfrow = c(2,2))
+plot(sim2$ttot ~ sim2$prob)
+plot(sim2$ttot ~ sim2$footpad)
+plot(sim2$ttot ~ sim2$freqpad)
+plot(sim2$ttot ~ sim2$tamapad)
+par(mfrow = c(1,1))
+```
+
+### 4.1.2 GLMM x GLM
+
+```{r eval=FALSE}
+glmm0full = glmer(ttot~tamapad*freqpad*footpad + (1|nsim), family = Gamma, data=sim2)
+
+```
+
+
+## 4.2 Simulação com área variável
+
+### 4.2.1 Análise exploratória
 ```{r echo=FALSE}
 hist(sim1$ttot)
 par(mfrow = c(2,2))
@@ -92,7 +114,7 @@ plot(sim1$ttot ~ sim1$tamapad)
 par(mfrow = c(1,1))
 ```
 
-## GLMM x GLM
+### 4.2.2 GLMM x GLM
 A principio, acreditamos que o GLMM é mais adequado para nossa estrutura de dados. No entanto, o modelo que gostaríamos de fazer não converge.
 ```{r eval=FALSE}
 # O modelo full nao converge:
