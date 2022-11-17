@@ -91,8 +91,8 @@ Figura 3 - Uma distribuição hipotética de machos (m1 a m10) e fêmea (F) no e
 
 Além do efeito das características dos sapos, decidimos também investigar se a variação na <code>area</code> da cachoeira é relevante para o tempo até o início do amplexo. Como resultado, apresentamos então duas simulações
 
-* Sim_Afix - dimensões da cachoeira (<code>area</code>) fixa em 50.
-* Sim2_Avar - dimensões da cachoeira (<code>area</code>) sorteada de uma distribuição uniforme entre 10 e 100 (arredondada para números inteiros).
+* <code>sim_Afix</code> - dimensões da cachoeira (<code>area</code>) fixa em 50.
+* <code>sim_Avar</code> - dimensões da cachoeira (<code>area</code>) sorteada de uma distribuição uniforme entre 10 e 100 (arredondada para números inteiros).
 
 Em ambas as simulações foram mantidos os valores padrão, com excessão de <code>nsim</code>, que foi fixado em 10000. Os valores padrão da função são:
 * <code>vecarea = round(runif(nsim, 10, 100), 0)</code>
