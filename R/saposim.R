@@ -48,6 +48,8 @@ saposim = function(nsim = 1000, vecarea = round(runif(nsim, 10, 100), 0), vecnma
     dados = data.frame(machoid = paste0("m", 1:nmacho), dcach = NA, foot = NA, freq = NA, tama = NA, footpad = NA, freqpad = NA, tamapad = NA, exprlin = NA, prob = NA, distf = NA, ttot = NA, nsim = NA, femea = NA, area = NA)
     
     ##### simula caracteristicas dos machos #####
+    
+    # parametros das distribuicoes
     dados$dcach = area-xmacho
     
     mfoot = 10 + dados$dcach*(-0.5)
@@ -59,21 +61,25 @@ saposim = function(nsim = 1000, vecarea = round(runif(nsim, 10, 100), 0), vecnma
     stama = dados$dcach*(0.5*(1/area))
     mtama = 40.4 - mean(stama) + stama
     
+    #sorteio a partir da distribuicao
     dados$foot = rpois(nmacho, lambda = mfoot)
     dados$freq = rnorm(nmacho, mean = mfreq, sd = 200)
     dados$tama = rnorm(nmacho, mean = mtama, sd = 2)
     
+    #padronizacao para escala dos desvios
     dados$footpad = padroniza(dados$foot)
     dados$tamapad = padroniza(dados$tama)  
     dados$freqpad = padroniza(dados$freq)
     
     ##### logistica #####
-    
+    #expressao linear padronizada
     dados$exprlin = cftama*dados$tamapad + cffoot*dados$footpad + cffreq*dados$freqpad
     dados$exprlin = dados$exprlin - mean(dados$exprlin)
+    #equacao logistica
     dados$prob = exp(dados$exprlin)/ (1+exp(dados$exprlin))
     dados$prob
     
+    #vetores para salvar machos indisponives e os ainda disponives
     mdisp = dados$machoid
     mindisp = NA
     
@@ -83,20 +89,16 @@ saposim = function(nsim = 1000, vecarea = round(runif(nsim, 10, 100), 0), vecnma
     
     for(j in 1:nmacho){
       
-      # Simula spawn de 1 femea
-      xfemea = sample(1:area, 1)
-      yfemea = sample(1:area, 1)
-      
-      
-      femeas = paste0("f", c(paste0(0, 1:9), 10:nmacho))
-      posf[j,] = c(xfemea, yfemea, femeas[j])
-      
       #checa se cedula esta ocupada
       while(!is.na(espaco[yfemea,xfemea])){
         xfemea = sample(1:area, 1)
         yfemea = sample(1:area, 1)
       }
       espaco[yfemea,xfemea] = "f"
+      
+      #salva nomes das femeas e posicao da femea j
+      femeas = paste0("f", c(paste0(0, 1:9), 10:nmacho))
+      posf[j,] = c(xfemea, yfemea, femeas[j])
       
       #### Sorteando macho escolhido ####
       escolhido = sample(mdisp, 1, prob = dados$prob[dados$machoid %in% mdisp])
@@ -109,6 +111,7 @@ saposim = function(nsim = 1000, vecarea = round(runif(nsim, 10, 100), 0), vecnma
       dados$nsim = paste0("sim", k)
       dados$area = area
       
+      #ordena por numero da femea
       dados = dados[order(dados$femea),]
       
       #### Voltando ao espaco inicial sem macho escolhido ####
@@ -117,6 +120,8 @@ saposim = function(nsim = 1000, vecarea = round(runif(nsim, 10, 100), 0), vecnma
       mindisp[j] = escolhido
       mdisp = dados$machoid[!dados$machoid %in% mindisp]
     }
+    
+    #salva resultado da simulacao
     result = rbind(result, dados)
     storepos[[k]] =list(espaco_orig, posf)
     
@@ -125,7 +130,7 @@ saposim = function(nsim = 1000, vecarea = round(runif(nsim, 10, 100), 0), vecnma
     }
     
   }
-  result = result[-1,]
+  result = result[-1,] #retira linha NA
   result$femeasim = paste(result$femea, result$nsim, sep = "_")
   row.names(result) = 1:length(result$area)
   return(result)
