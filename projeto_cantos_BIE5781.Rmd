@@ -175,12 +175,12 @@ library(bbmle)
 ## 4.1 Simulação com área fixa
 
 ```{r echo=FALSE, fig.align = 'center'}
-# 1. Histograma de tempo até início da cópula
-hist(sim_Afix10$ttot, main = "tempo até início da cópula", xlab = "tempo total")
+# 1. Histograma de tempo ate inicio da copula
+hist(sim_Afix10$ttot, main = "", xlab = "Tempo até início da cópula")
 
 # 2. Scatter Plots
 
-## 2.1 Tempo até amplexo vs Prob. do macho ser escolhido
+## 2.1 Tempo ate amplexo vs Prob. do macho ser escolhido
 p1 = ggplot(sim_Afix10, aes(prob, ttot, color=prob)) +
   geom_point(shape=16, size = .2, show.legend = F, alpha = .5) +
   theme_minimal() +
@@ -188,7 +188,7 @@ p1 = ggplot(sim_Afix10, aes(prob, ttot, color=prob)) +
   xlab("\nProb. do macho ser escolhido") +
   ylab("Tempo até início da cópula\n")
 
-## 2.2 Tempo até amplexo vs taxa de foot-flagging
+## 2.2 Tempo ate amplexo vs taxa de foot-flagging
 p2 = ggplot(sim_Afix10, aes(footpad, ttot, color=footpad)) +
   geom_point(shape=16, size=.2, show.legend=F, alpha = .5) +
   theme_minimal() +
@@ -196,7 +196,7 @@ p2 = ggplot(sim_Afix10, aes(footpad, ttot, color=footpad)) +
   xlab("\nTaxa de foot-flagging (n eventos/min)") +
   ylab("Tempo até início da cópula\n")
 
-## 2.3 Tempo até amplexo vs DF
+## 2.3 Tempo ate amplexo vs DF
 p3 = ggplot(sim_Afix10, aes(freqpad, ttot, color=freqpad)) +
   geom_point(shape=16, size=.05, show.legend=F, alpha = .5) +
   theme_minimal() +
@@ -204,7 +204,7 @@ p3 = ggplot(sim_Afix10, aes(freqpad, ttot, color=freqpad)) +
   xlab("\nFrequência dominante (Hz)") +
   ylab("Tempo até início da cópula\n")
 
-## 2.4 Tempo até amplexo vs SVL
+## 2.4 Tempo ate amplexo vs SVL
 p4 = ggplot(sim_Afix10, aes(tamapad, ttot, color=tamapad)) +
   geom_point(shape=16, size=.05, show.legend=F, alpha = .5) +
   theme_minimal() +
@@ -228,7 +228,7 @@ glmm0full = glmer(ttot~tamapad*freqpad*footpad + (1|nsim), family = Gamma, data=
 ### 4.2.1 Análise exploratória
 ```{r echo=FALSE}
 # Histograma de tempo até início da cópula
-hist(sim_Avar$ttot, main = "tempo até início da cópula", xlab = "tempo total")
+hist(sim_Avar$ttot, main = "", xlab = "Tempo até início da cópula")
 par(mfrow = c(2,2))
 plot(sim_Avar$ttot ~ sim_Avar$prob)
 plot(sim_Avar$ttot ~ sim_Avar$footpad)
