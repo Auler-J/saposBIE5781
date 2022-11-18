@@ -113,8 +113,9 @@ Além do efeito das características dos sapos, decidimos também investigar se 
 
 
 Em ambas as simulações foram mantidos os valores padrão, com excessão de <code>nsim</code>, que foi fixado em 10000. Os valores padrão da função são:
+
 * <code>vecarea = round(runif(nsim, 10, 100), 0)</code>
-* <code>vecnmacho= vecarea</code>
+* <code>vecnmacho = vecarea</code>
 * <code>cffreq</code> = 1.05
 * <code>cftama</code> = 0.5
 * <code>cffoot</code> = 0.8
@@ -122,16 +123,48 @@ Em ambas as simulações foram mantidos os valores padrão, com excessão de <co
 O código das simulações está no documento "R/simula_dados.R". Como <code>nsim</code> é muito grande e leva alguns minutos, salvamos o resultado das simulações como arquivos <code>R.data</code>.
 
 ```{r}
-load("data/sim1.Rdata") # mudar a mean freq deve ser 5750
-load("data/sim2.Rdata") # mudar a mean freq deve ser 5750
-summary(sim1)
-summary(sim2)
+load("data/sim_Avar.Rdata")
+load("data/sim_Afix10.Rdata")
+load("data/sim_Afix50.Rdata")
+load("data/sim_Afix100.Rdata")
 ```
+
+<details>
+
+  <summary>Sumário de sim_Avar</summary>
+```{r}
+summary(sim_Avar)
+```
+</details>
+
+<details>
+
+  <summary>Sumário de sim_Afix10</summary>
+```{r}
+summary(sim_Afix10)
+```
+</details>
+
+<details>
+
+  <summary>Sumário de sim_Afix50</summary>
+```{r}
+summary(sim_Afix50)
+```
+</details>
+
+<details>
+
+  <summary>Sumário de sim_Afix100</summary>
+```{r}
+summary(sim_Afix100)
+```
+</details>
 
 # 4. Análises
 
 Pacotes utilizados
-```{r}
+```{r message=FALSE, warning=FALSE}
 library(ggplot2)
 library(gridExtra)
 library(lme4)
@@ -143,12 +176,12 @@ library(bbmle)
 
 ```{r echo=FALSE, fig.align = 'center'}
 # 1. Histograma de tempo até início da cópula
-hist(sim2$ttot)
+hist(sim_Afix10$ttot, main = "tempo até início da cópula", xlab = "tempo total")
 
 # 2. Scatter Plots
 
 ## 2.1 Tempo até amplexo vs Prob. do macho ser escolhido
-p1 = ggplot(sim2, aes(prob, ttot, color=prob)) +
+p1 = ggplot(sim_Afix10, aes(prob, ttot, color=prob)) +
   geom_point(shape=16, size = .2, show.legend = F, alpha = .5) +
   theme_minimal() +
   scale_color_gradient(low = "darkseagreen1", high = "darkslategrey") +
@@ -156,7 +189,7 @@ p1 = ggplot(sim2, aes(prob, ttot, color=prob)) +
   ylab("Tempo até início da cópula\n")
 
 ## 2.2 Tempo até amplexo vs taxa de foot-flagging
-p2 = ggplot(sim2, aes(footpad, ttot, color=footpad)) +
+p2 = ggplot(sim_Afix10, aes(footpad, ttot, color=footpad)) +
   geom_point(shape=16, size=.2, show.legend=F, alpha = .5) +
   theme_minimal() +
   scale_color_gradient(low = "darkseagreen1", high = "darkslategrey") +
@@ -164,7 +197,7 @@ p2 = ggplot(sim2, aes(footpad, ttot, color=footpad)) +
   ylab("Tempo até início da cópula\n")
 
 ## 2.3 Tempo até amplexo vs DF
-p3 = ggplot(sim2, aes(freqpad, ttot, color=freqpad)) +
+p3 = ggplot(sim_Afix10, aes(freqpad, ttot, color=freqpad)) +
   geom_point(shape=16, size=.05, show.legend=F, alpha = .5) +
   theme_minimal() +
   scale_color_gradient(low = "darkseagreen1", high = "darkslategrey") +
@@ -172,7 +205,7 @@ p3 = ggplot(sim2, aes(freqpad, ttot, color=freqpad)) +
   ylab("Tempo até início da cópula\n")
 
 ## 2.4 Tempo até amplexo vs SVL
-p4 = ggplot(sim2, aes(tamapad, ttot, color=tamapad)) +
+p4 = ggplot(sim_Afix10, aes(tamapad, ttot, color=tamapad)) +
   geom_point(shape=16, size=.05, show.legend=F, alpha = .5) +
   theme_minimal() +
   scale_color_gradient(low = "darkseagreen1", high = "darkslategrey") +
@@ -195,12 +228,12 @@ glmm0full = glmer(ttot~tamapad*freqpad*footpad + (1|nsim), family = Gamma, data=
 ### 4.2.1 Análise exploratória
 ```{r echo=FALSE}
 # Histograma de tempo até início da cópula
-hist(sim1$ttot)
+hist(sim_Avar$ttot, main = "tempo até início da cópula", xlab = "tempo total")
 par(mfrow = c(2,2))
-plot(sim1$ttot ~ sim1$prob)
-plot(sim1$ttot ~ sim1$footpad)
-plot(sim1$ttot ~ sim1$freqpad)
-plot(sim1$ttot ~ sim1$tamapad)
+plot(sim_Avar$ttot ~ sim1$prob)
+plot(sim_Avar$ttot ~ sim1$footpad)
+plot(sim_Avar$ttot ~ sim1$freqpad)
+plot(sim_Avar$ttot ~ sim1$tamapad)
 par(mfrow = c(1,1))
 ```
 
