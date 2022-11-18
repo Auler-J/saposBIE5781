@@ -13,15 +13,14 @@ knitr::opts_chunk$set(echo = TRUE)
 
 # 1. Introdução
 
-<center>
+<center><img src="fig1.png" width="400"></center>
+<center>Figura 1: Ilustração de rã-de-corredeira (Hylodidae: Hylodes asper).</center>
 
-<img src="fig1.png" width="400">
+\
 
-</center>
+Em anuros, o canto de anúncio é aquele emitido por machos para atrair fêmeas ou repelir machos competidores na paisagem acústica (Wells 1977; Duellman & Trueb 1986). A maioria das espécies de anuros apresentam comportamento noturno e portanto são altamente dependentes do canto para se reproduzirem. Contudo, na espécie *Hylodes asper* (Anura: Hylodidae) os machos apresentam comportamento diurno, sedentário e esperam até as fêmeas chegarem nos sítios reprodutivos, onde cantam em superfícies de rochas próximas a águas lóticas (i.e. rios de correnteza intensa ou cachoeiras; Heyer et al. 1990; Haddad & Giaretta 1999). Devido à disponibilidade de luz e ao ruído de fundo das correntezas, sinais visuais podem ser apresentados concomitantemente aos sinais acústicos para maximizar a transmissão de informação entre o macho emissor e as fêmeas ou machos receptores (Hödl et al. 1997). Embora a maioria dos estudos utilize aspectos temporais (e.g. taxa de cantos) ou espectrais (i.e. o quão agudo ou grave o canto é) como variáveis respostas de modelos (e.g. Gingras et al. 2013; Goutte et al. 2016), o tempo em que as fêmeas demoram para chegar nos sítios reprodutivos e iniciarem o amplexo é pouco estudado.
 
-  Em anuros, o canto de anúncio é aquele emitido por machos para atrair fêmeas ou repelir machos competidores na paisagem acústica (Wells 1977; Duellman & Trueb 1986). A maioria das espécies de anuros apresentam comportamento noturno e portanto são altamente dependentes do canto para se reproduzirem. Contudo, na espécie *Hylodes asper* (Anura: Hylodidae) os machos apresentam comportamento diurno, sedentário e esperam até as fêmeas chegarem nos sítios reprodutivos, onde cantam em superfícies de rochas próximas a águas lóticas (i.e. rios de correnteza intensa ou cachoeiras; Heyer et al. 1990; Haddad & Giaretta 1999). Devido à disponibilidade de luz e ao ruído de fundo das correntezas, sinais visuais podem ser apresentados concomitantemente aos sinais acústicos para maximizar a transmissão de informação entre o macho emissor e as fêmeas ou machos receptores (Hödl et al. 1997). Embora a maioria dos estudos utilize aspectos temporais (e.g. taxa de cantos) ou espectrais (i.e. o quão agudo ou grave o canto é) como variáveis respostas de modelos (e.g. Gingras et al. 2013; Goutte et al. 2016), o tempo em que as fêmeas demoram para chegar nos sítios reprodutivos e iniciarem o amplexo é pouco estudado.
-
-  Existem sinais multimodais compostos por características morfológicas, acústicas e visuais que são consideradas mais atrativas pelas fêmeas e podem explicar o tempo até sua chegada e início do amplexo. Por exemplo, uma possível preditora acústica é a **frequência dominante** do canto (DF: a banda com maior concentração de energia no espectro; Köhler et al. 2017), no qual cantos mais graves são considerados mais atrativos e talvez reduzam o tempo até o início do amplexo, pois machos com canto mais grave geralmente tem cordas vocais mais espessas e compridas (McClelland et al. 1996), o que geralmente é um sinal honesto que informa o tamanho corporal do macho (Wells 2007; Köhler et al. 2017). Contudo, existem machos que mentem! Machos mentirosos são comuns em algumas espécies, os quais conseguem modular a frequência do canto (i.e. deixar mais grave por relaxamento dos músculos da cartilagem aritenóide; Martin 1971; Schmid 1979; Ryan 1988). Por isso, incluir o **tamanho corporal** como uma variável preditora é uma forma de avaliar a honestidade da frequência. Por fim, machos da espécie *Hylodes asper* às vezes cantam ao mesmo tempo em que apresentam um display visual chamado <strong><em>foot-flagging</em></strong>, no qual esticam as pernas para chamarem atenção das fêmeas visualmente devido ao barulho das corredeiras que podem reduzir as chances de serem escutados pelas fêmeas (Heyer et al. 1990; Haddad & Giaretta 1999). Portanto, uma última hipótese é que uma taxa de foot-flagging alta reduza o tempo até as fêmeas iniciarem o amplexo.
+Existem sinais multimodais compostos por características morfológicas, acústicas e visuais que são consideradas mais atrativas pelas fêmeas e podem explicar o tempo até sua chegada e início do amplexo. Por exemplo, uma possível preditora acústica é a **frequência dominante** do canto (DF: a banda com maior concentração de energia no espectro; Köhler et al. 2017), no qual cantos mais graves são considerados mais atrativos e talvez reduzam o tempo até o início do amplexo, pois machos com canto mais grave geralmente tem cordas vocais mais espessas e compridas (McClelland et al. 1996), o que geralmente é um sinal honesto que informa o tamanho corporal do macho (Wells 2007; Köhler et al. 2017). Contudo, existem machos que mentem! Machos mentirosos são comuns em algumas espécies, os quais conseguem modular a frequência do canto (i.e. deixar mais grave por relaxamento dos músculos da cartilagem aritenóide; Martin 1971; Schmid 1979; Ryan 1988). Por isso, incluir o **tamanho corporal** como uma variável preditora é uma forma de avaliar a honestidade da frequência. Por fim, machos da espécie *Hylodes asper* às vezes cantam ao mesmo tempo em que apresentam um display visual chamado <strong><em>foot-flagging</em></strong>, no qual esticam as pernas para chamarem atenção das fêmeas visualmente devido ao barulho das corredeiras que podem reduzir as chances de serem escutados pelas fêmeas (Heyer et al. 1990; Haddad & Giaretta 1999). Portanto, uma última hipótese é que uma taxa de foot-flagging alta reduza o tempo até as fêmeas iniciarem o amplexo.
 
 # 2. Objetivos e hipóteses
 
@@ -39,24 +38,37 @@ O objetivo geral desse trabalho é responder como sinais multi-modais influencia
 - H0: Não há influência da taxa de *foot-flagging* sobre o tempo até o início do amplexo
 - H1: Taxa de *foot-flagging* é negativamente relacionada com o tempo até o início do amplexo, de modo que machos que dançam mais copulam antes
 
-<center>
+<center><img src="fig2.png" width="500"></center>
+<center>Figura 2: Predições para as perguntas do trabalho. Espera-se uma (I) relação positiva entre frequência dominante (DF) e tempo até o amplexo, (II) relação negativa entre tamanho corporal e tempo até o amplexo, e (III) relação negativa entre taxa de foot-flagging e tempo até o amplexo.</center>
 
-<img src="fig2.png" width="400">
-
-</center>
+\
 
 # 3. Simulação de dados
+
+Embora dados das nossas variáveis preditoras sejam mais acessíveis na literatura, dados da nossa variável resposta (tempo de espera da fêmea até início da cópula) são escassos. Isso ocorre pois é extremamente custoso ao biólogo de campo tentar localizar uma fêmea de anuro próxima dos machos já que elas não cantam e raramente são vistas na natureza. Portanto, optamos pelo uso de dados simulados.
+
+As nossas variáveis preditoras teóricas são frequência do canto, tamanho corporal e *display* de *foot-flagging*. Contudo, precisamos operacionalizar essas variáveis. Utilizamos as seguintes variáveis preditoras operacionais:
+
+- (I) frequência dominante (DF: medida em Hz), definida como a frequência no espectro harmônico com maior concentração de energia que é percebida pelo ouvido humano como o quão grave ou agudo os sons são (Köhler et al. 2017); 
+
+- (II) comprimento rostro-cloacal (SVL: *snout-vent length*, medida em mm), o qual é amplamente usado como aproximação do tamanho corporal pois mede o comprimento da extremedidade anterior do focinho até a extremidade posterior da cloaca (Duellman 1970); 
+
+- (III) taxa de *foot-flagging* (medida em número de eventos/minuto). 
+
+Para *Hylodes asper*, Haddad & Giaretta (1999) reportaram que a DF se encontra no terceiro harmônico entre 5000 a 6500 Hz (Fig. 3), com valor de *midpoint* igual a 5750 Hz. Heyer et al. (1990) reportaram que os machos apresentam um SVL médio de 40.5 mm (39.4-42.3 mm). Já a taxa de *foot-flagging* não foi reportada por unidade de tempo em nenhum destes trabalhos, mas é possível estimar através de vídeos disponíveis no YouTube (~1-2/min). Utilizamos estes valores como referência das características dos machos simulados na função 'saposim'.
 
 ```{r ass.function}
 source("R/funcoes_auxiliares.R")
 source("R/saposim.R")
 ```
 
-A cada simução é criada uma nova matriz de <code>espaco</code> de <code>area</code> linhas e <code>area</code> colunas. Em seguida, são sorteadas as posições dos <code>nmacho</code> daquela simulação. A frequência de canto <code>freq</code> (Hz), taxa de footflag <code>foot</code> (footflag/minuto) e tamanho corporal <code>tama</code> (cm) de cada um dos machos é simulada. Estas caracteristicas são sorteadas a partir de uma distribuição que acreditamos ser realiza (normal, poisson e normal, respectivamente) e, em seguida, padronizadas pela função <code>padroniza</code>. Os valores padronizados aparecem no output como <code>freqpad</code>, <code>footpad</code> e <code>tamapad</code>. É esperado que machos mais próximos à cachoeira tenham menor tamanho corporal e vocalizem em frequencias mais agudas (maiores), portanto tenham, em média, probabilidade menor de atrair fêmeas. No entanto, é esperado que esses machos tenham também maior taxa de footflag, o que pode contra-balancear essa esperança. Apesar de estes valores serem correlacionados, as características do macho são sorteadas independentemente de uma distribuição aleatória.
+A cada simução é criada uma nova matriz de <code>espaco</code> de <code>area</code> linhas e <code>area</code> colunas. Em seguida, são sorteadas as posições dos <code>nmacho</code> daquela simulação. A frequência dominante do canto <code>freq</code> (DF: Hz), taxa de *foot-flagging* <code>foot</code> (número de eventos de *foot-flagging*/minuto) e tamanho corporal <code>tama</code> (SVL: mm) de cada um dos machos é simulada. Estas caracteristicas são sorteadas a partir de uma distribuição  (normal, poisson e normal para DF, taxa de *foot-flagging* e SVL, respectivamente) e, em seguida, padronizadas pela função <code>padroniza</code>. Os valores padronizados aparecem no output como <code>freqpad</code>, <code>footpad</code> e <code>tamapad</code>. É esperado que machos mais próximos à cachoeira tenham menor tamanho corporal (SVL menor) e vocalizem em frequencias mais agudas (DF maior) e portanto tenham, em média, probabilidade menor de atrair fêmeas. No entanto, é esperado que esses machos tenham também maior taxa de *foot-flagging*, o que pode contra-balancear essa esperança. Apesar de estes valores serem correlacionados, as características do macho são sorteadas independentemente de uma distribuição aleatória.
+
 A probabilidade de seleção do macho é então calculada através de uma regressão logistica, 
 $$P = \frac{e^{exprlin}}{1+e^{exprlin}}$$ 
-com expressão linear de fórmula: $exprlin = a \times tamanho + b \times taxafootflag + c \times DF$ e intercepto igual a média da expressão linear.
-Uma cédula vazia é então sorteada para a fêmea ocupar, e esta escolhe um macho para copular com probabilidade <code>prob</code>. A distância <code>distf</code> entre a fêmea e o macho escolhido é calculada pela função <code>dist</code>. A fêmea e o macho são considerados ocupados até o final da simulação e são retirados do <code>espaco</code>. A simulação se repete com <code>nfemea = nmacho</code>. O tempo total <code>ttot</code> o macho ser escolhido também é guardado, sendo definido como a soma de todas <code>distf</code> anteriores na mesma simulação. A função de simulação de sapos, <code>saposim</code> se encontra na íntegra no arquivo "R/saposim.R".
+com expressão linear de fórmula: $exprlin = a \times tamanho + b \times taxafootflag + c \times DF$ e intercepto igual à média da expressão linear.
+
+Uma cédula vazia é então sorteada para a fêmea ocupar, e esta escolhe um macho para copular com probabilidade <code>prob</code>. A distância <code>distf</code> entre a fêmea e o macho escolhido é calculada pela função <code>dist</code>. A fêmea e o macho são considerados ocupados até o final da simulação e são retirados do <code>espaco</code>. A simulação se repete com <code>nfemea = nmacho</code>. O tempo total <code>ttot</code> para o macho ser escolhido também é guardado, sendo definido como a soma de todas <code>distf</code> anteriores na mesma simulação. A função de simulação de sapos, <code>saposim</code> se encontra na íntegra no arquivo "R/saposim.R".
 
 ```{r figura, echo=FALSE, fig.align = 'center'}
 par(mar = c(0,0,1,0))
@@ -87,7 +99,10 @@ text(x = 4.5, y = 5.5, "F", col = "red")
 segments(x0 = 3.5, x1 = 4.3, y0 = -0.5, y1 = 5.5, lty = 2, col = "green")
 text(x = 4.15, y = 2.5, "distf = 7.3", col = "green", cex = 0.7)
 ```
-Figura 3 - Uma distribuição hipotética de machos (m1 a m10) e fêmea (F) no espaço. A probabilidade de seleção dos machos está representada pelo tamanho da fonte. Ao lado direito se encontra a cachoeira, que se correlaciona com a probabilidade de seleção. Neste exemplo, o macho "m10" foi escolhido e a sua distancia "distf" foi calculada. 
+
+<center>Figura 3 - Uma distribuição hipotética de machos (m1 a m10) e fêmea (F) no espaço. A probabilidade de seleção dos machos está representada pelo tamanho da fonte. Ao lado direito se encontra a cachoeira, que se correlaciona com a probabilidade de seleção. Neste exemplo, o macho "m10" foi escolhido e a sua distancia "distf" foi calculada.</center> 
+
+\
 
 Além do efeito das características dos sapos, decidimos também investigar se a variação na <code>area</code> da cachoeira é relevante para o tempo até o início do amplexo. Como resultado, apresentamos então duas simulações
 
@@ -104,17 +119,18 @@ Em ambas as simulações foram mantidos os valores padrão, com excessão de <co
 O código das simulações está no documento "R/simula_dados.R". Como <code>nsim</code> é muito grande e leva alguns minutos, salvamos o resultado das simulações como arquivos <code>R.data</code>.
 
 ```{r}
-load("data/sim1.Rdata") #mudar dps
-load("data/sim2.Rdata")
+load("data/sim1.Rdata") # mudar a mean freq deve ser 5750
+load("data/sim2.Rdata") # mudar a mean freq deve ser 5750
 summary(sim1)
 summary(sim2)
 ```
 
-
-# 4. Analises
+# 4. Análises
 
 Pacotes utilizados
 ```{r}
+library(ggplot2)
+library(gridExtra)
 library(lme4)
 library(MASS)
 library(bbmle)
@@ -123,13 +139,44 @@ library(bbmle)
 ## 4.1 Simulação com área fixa
 
 ```{r echo=FALSE, fig.align = 'center'}
+# 1. Histograma de tempo até início da cópula
 hist(sim2$ttot)
-par(mfrow = c(2,2))
-plot(sim2$ttot ~ sim2$prob)
-plot(sim2$ttot ~ sim2$footpad)
-plot(sim2$ttot ~ sim2$freqpad)
-plot(sim2$ttot ~ sim2$tamapad)
-par(mfrow = c(1,1))
+
+# 2. Scatter Plots
+
+## 2.1 Tempo até amplexo vs Prob. do macho ser escolhido
+p1 = ggplot(sim2, aes(prob, ttot, color=prob)) +
+  geom_point(shape=16, size = .2, show.legend = F, alpha = .5) +
+  theme_minimal() +
+  scale_color_gradient(low = "darkseagreen1", high = "darkslategrey") +
+  xlab("\nProb. do macho ser escolhido") +
+  ylab("Tempo até início da cópula\n")
+
+## 2.2 Tempo até amplexo vs taxa de foot-flagging
+p2 = ggplot(sim2, aes(footpad, ttot, color=footpad)) +
+  geom_point(shape=16, size=.2, show.legend=F, alpha = .5) +
+  theme_minimal() +
+  scale_color_gradient(low = "darkseagreen1", high = "darkslategrey") +
+  xlab("\nTaxa de foot-flagging (n eventos/min)") +
+  ylab("Tempo até início da cópula\n")
+
+## 2.3 Tempo até amplexo vs DF
+p3 = ggplot(sim2, aes(freqpad, ttot, color=freqpad)) +
+  geom_point(shape=16, size=.05, show.legend=F, alpha = .5) +
+  theme_minimal() +
+  scale_color_gradient(low = "darkseagreen1", high = "darkslategrey") +
+  xlab("\nFrequência dominante (Hz)") +
+  ylab("Tempo até início da cópula\n")
+
+## 2.4 Tempo até amplexo vs SVL
+p4 = ggplot(sim2, aes(tamapad, ttot, color=tamapad)) +
+  geom_point(shape=16, size=.05, show.legend=F, alpha = .5) +
+  theme_minimal() +
+  scale_color_gradient(low = "darkseagreen1", high = "darkslategrey") +
+  xlab("\nTamanho corporal (mm)") +
+  ylab("Tempo até início da cópula\n")
+
+grid.arrange(p1, p2, p3, p4, nrow = 2)
 ```
 
 ### 4.1.2 GLMM x GLM
@@ -144,6 +191,7 @@ glmm0full = glmer(ttot~tamapad*freqpad*footpad + (1|nsim), family = Gamma, data=
 
 ### 4.2.1 Análise exploratória
 ```{r echo=FALSE}
+# Histograma de tempo até início da cópula
 hist(sim1$ttot)
 par(mfrow = c(2,2))
 plot(sim1$ttot ~ sim1$prob)
