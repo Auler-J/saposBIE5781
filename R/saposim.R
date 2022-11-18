@@ -35,7 +35,7 @@ saposim = function(nsim = 1000, vecarea = round(runif(nsim, 10, 100), 0), vecnma
     espaco = matrix(NA, ncol = area, nrow = area)
     dimnames(espaco) = list(paste("L", 1:area), paste("C", 1:area))
     
-    # Simula spawn de 10 machos
+    # sorteia a posicao dos nmacho
     xmacho = sample(1:area, nmacho)
     ymacho = sample(1:area, nmacho)
     
@@ -88,6 +88,10 @@ saposim = function(nsim = 1000, vecarea = round(runif(nsim, 10, 100), 0), vecnma
     ####################################################
     
     for(j in 1:nmacho){
+      
+      #simula o aparecimento de uma femea
+      xfemea = sample(1:area, 1)
+      yfemea = sample(1:area, 1)
       
       #checa se cedula esta ocupada
       while(!is.na(espaco[yfemea,xfemea])){
