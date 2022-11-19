@@ -14,7 +14,7 @@ knitr::opts_chunk$set(echo = TRUE)
 # 1. Introdução
 
 <center><img src="fig1.png" width="400"></center>
-<center>Figura 1: Ilustração de rã-de-corredeira (Hylodidae: Hylodes asper).</center>
+<center>Figura 1: Ilustração de rã-de-corredeira (Hylodidae: Hylodes asper). Fonte: Paulo Presti.</center>
 
 \
 
@@ -49,13 +49,13 @@ Embora dados das nossas variáveis preditoras sejam mais acessíveis na literatu
 
 As nossas variáveis preditoras teóricas são frequência do canto, tamanho corporal e *display* de *foot-flagging*. Contudo, precisamos operacionalizar essas variáveis. Utilizamos as seguintes variáveis preditoras operacionais:
 
-- (I) frequência dominante (DF: medida em Hz), definida como a frequência no espectro harmônico com maior concentração de energia que é percebida pelo ouvido humano como o quão grave ou agudo os sons são (Köhler et al. 2017); 
+- Frequência dominante (DF: medida em Hz), definida como a frequência no espectro harmônico com maior concentração de energia que é percebida pelo ouvido humano como o quão grave ou agudo os sons são (Köhler et al. 2017); 
 
-- (II) comprimento rostro-cloacal (SVL: *snout-vent length*, medida em mm), o qual é amplamente usado como aproximação do tamanho corporal pois mede o comprimento da extremedidade anterior do focinho até a extremidade posterior da cloaca (Duellman 1970); 
+- Comprimento rostro-cloacal (SVL: *snout-vent length*, medida em mm), o qual é amplamente usado como aproximação do tamanho corporal pois mede o comprimento da extremedidade anterior do focinho até a extremidade posterior da cloaca (Duellman 1970); 
 
-- (III) taxa de *foot-flagging* (medida em número de eventos/minuto). 
+- Taxa de *foot-flagging* (medida em número de eventos/minuto). 
 
-Para *Hylodes asper*, Haddad & Giaretta (1999) reportaram que a DF se encontra no terceiro harmônico entre 5000 a 6500 Hz (Fig. 3), com valor de *midpoint* igual a 5750 Hz. Heyer et al. (1990) reportaram que os machos apresentam um SVL médio de 40.5 mm (39.4-42.3 mm). Já a taxa de *foot-flagging* não foi reportada por unidade de tempo em nenhum destes trabalhos, mas é possível estimar através de vídeos disponíveis no YouTube (~1-2/min). Utilizamos estes valores como referência das características dos machos simulados na função 'saposim'.
+Para *Hylodes asper*, Haddad & Giaretta (1999) reportaram que a DF se encontra no terceiro harmônico entre 5000 a 6500 Hz, com valor de *midpoint* ([máx - min] / 2) igual a 5750 Hz. Heyer et al. (1990) reportaram que os machos apresentam um SVL médio de 40.5 mm (39.4-42.3 mm). Já a taxa de *foot-flagging* não foi reportada por unidade de tempo em nenhum destes trabalhos, mas é possível estimar através de vídeos disponíveis no YouTube (~10 a cada 5 min). Utilizamos estes valores como referência das características dos machos simulados na função 'saposim'.
 
 ```{r ass.function}
 source("R/funcoes_auxiliares.R")
@@ -73,29 +73,29 @@ Uma cédula vazia é então sorteada para a fêmea ocupar, e esta escolhe um mac
 ```{r figura, echo=FALSE, fig.align = 'center'}
 par(mar = c(0,0,1,0))
 
-#plot vazio
+# Plot vazio
 plot(NULL, xlim = c(-2, 12), ylim = c(-2, 12), ann = FALSE, xaxt = "n", yaxt = "n", bty = "n", asp = 1)
 
-#faz grid
+# Faz grid
 segments(x0 = -1:11, x1 = -1:11, y0 = rep(-1, 11), y1 = rep(11, 11))
 segments(x0 = rep(-1, 11), x1 = rep(11, 11), y0 = -1:11, y1 = -1:11)
 
-#cria cachoeira
+# Cria cachoeira
 mtext(text = "area = 12", at = 5, side = 3, line = 0)
 rect(xleft = 11, ybottom = -2, xright = 12, ytop = 12, col = "lightblue")
 
-#faz labels
+# Faz labels
 text(x = -0.5:10.5, y = 11.5, paste0("C", 1:12), cex = 0.5)
 text(x = -1.5, y =  -0.5:10.5, paste0("L", 12:1), cex = 0.5)
 text(x = 11.5, y =  5, "cachoeira", cex = 1.5, srt = 270)
 
-#plota machos
+# Plota machos
 text(x = c(3, 10,  2,  1,  2,  7,  9,  6,  0,  3)+0.5, y = c(9,  1,  8,  9,  5,  4,  2,  8, -1, -1)+0.5, paste0("m", 1:10), cex = c(0.58, 0.29, 0.63, 0.52, 0.58, 0.47, 0.51, 0.40, 0.51, 0.7), col = c(rep("black", 9), "blue")) 
 
-#plota femea
+# Plota fêmea
 text(x = 4.5, y = 5.5, "F", col = "red")
 
-#distancia entre macho escolhido e femea
+# Distância entre macho escolhido e fêmea
 segments(x0 = 3.5, x1 = 4.3, y0 = -0.5, y1 = 5.5, lty = 2, col = "green")
 text(x = 4.15, y = 2.5, "distf = 7.3", col = "green", cex = 0.7)
 ```
@@ -104,7 +104,7 @@ text(x = 4.15, y = 2.5, "distf = 7.3", col = "green", cex = 0.7)
 
 \
 
-Além do efeito das características dos sapos, decidimos também investigar se a variação na <code>area</code> da cachoeira é relevante para o tempo até o início do amplexo. Como resultado, apresentamos então quatro simulações
+Além do efeito das características dos sapos, decidimos também investigar se a variação na <code>area</code> da cachoeira é relevante para o tempo até o início do amplexo. Como resultado, apresentamos então quatro simulações:
 
 * <code>sim_Avar</code> - dimensões da cachoeira (<code>area</code>) sorteada de uma distribuição uniforme entre 10 e 100 (arredondada para números inteiros).
 * <code>sim_Afix10</code> - dimensões da cachoeira (<code>area</code>) fixa em 10.
@@ -112,7 +112,7 @@ Além do efeito das características dos sapos, decidimos também investigar se 
 * <code>sim_Afix100</code> - dimensões da cachoeira (<code>area</code>) fixa em 100.
 
 
-Em ambas as simulações foram mantidos os valores padrão, com excessão de <code>nsim</code>, que foi fixado em 10000. Os valores padrão da função são:
+Em ambas as simulações foram mantidas os valores padrão, com exceção de <code>nsim</code>, que foi fixado em 10000. Os valores padrão da função são:
 
 * <code>vecarea = round(runif(nsim, 10, 100), 0)</code>
 * <code>vecnmacho = vecarea</code>
@@ -174,6 +174,9 @@ library(bbmle)
 
 ## 4.1 Simulação com área fixa
 
+## 4.1.1 Área fixa em 10
+
+Análise exploratória
 ```{r echo=FALSE, fig.align = 'center'}
 # 1. Histograma de tempo ate inicio da copula
 hist(sim_Afix10$ttot, main = "", xlab = "Tempo até início da cópula")
@@ -181,7 +184,7 @@ hist(sim_Afix10$ttot, main = "", xlab = "Tempo até início da cópula")
 # 2. Scatter Plots
 
 ## 2.1 Tempo ate amplexo vs Prob. do macho ser escolhido
-p1 = ggplot(sim_Afix10, aes(prob, ttot, color=prob)) +
+p1.10 = ggplot(sim_Afix10, aes(prob, ttot, color=prob)) +
   geom_point(shape=16, size = .2, show.legend = F, alpha = .5) +
   theme_minimal() +
   scale_color_gradient(low = "darkseagreen1", high = "darkslategrey") +
@@ -189,7 +192,7 @@ p1 = ggplot(sim_Afix10, aes(prob, ttot, color=prob)) +
   ylab("Tempo até início da cópula\n")
 
 ## 2.2 Tempo ate amplexo vs taxa de foot-flagging
-p2 = ggplot(sim_Afix10, aes(footpad, ttot, color=footpad)) +
+p2.10 = ggplot(sim_Afix10, aes(footpad, ttot, color=footpad)) +
   geom_point(shape=16, size=.2, show.legend=F, alpha = .5) +
   theme_minimal() +
   scale_color_gradient(low = "darkseagreen1", high = "darkslategrey") +
@@ -197,7 +200,7 @@ p2 = ggplot(sim_Afix10, aes(footpad, ttot, color=footpad)) +
   ylab("Tempo até início da cópula\n")
 
 ## 2.3 Tempo ate amplexo vs DF
-p3 = ggplot(sim_Afix10, aes(freqpad, ttot, color=freqpad)) +
+p3.10 = ggplot(sim_Afix10, aes(freqpad, ttot, color=freqpad)) +
   geom_point(shape=16, size=.05, show.legend=F, alpha = .5) +
   theme_minimal() +
   scale_color_gradient(low = "darkseagreen1", high = "darkslategrey") +
@@ -205,36 +208,130 @@ p3 = ggplot(sim_Afix10, aes(freqpad, ttot, color=freqpad)) +
   ylab("Tempo até início da cópula\n")
 
 ## 2.4 Tempo ate amplexo vs SVL
-p4 = ggplot(sim_Afix10, aes(tamapad, ttot, color=tamapad)) +
+p4.10 = ggplot(sim_Afix10, aes(tamapad, ttot, color=tamapad)) +
   geom_point(shape=16, size=.05, show.legend=F, alpha = .5) +
   theme_minimal() +
   scale_color_gradient(low = "darkseagreen1", high = "darkslategrey") +
   xlab("\nTamanho corporal (mm)") +
   ylab("Tempo até início da cópula\n")
 
-grid.arrange(p1, p2, p3, p4, nrow = 2)
+grid.arrange(p1.10, p2.10, p3.10, p4.10, nrow = 2)
 ```
 
-### 4.1.2 GLMM x GLM
-
+Modelos
 ```{r eval=FALSE}
 glmm0full = glmer(ttot~tamapad*freqpad*footpad + (1|nsim), family = Gamma, data=sim_Afix10)
+summary(glm(ttot~tamapad*freqpad*footpad, data=teste, family = Gamma))
 
 ```
 
+### 4.1.2 Área fixa em 50
+
+Análise exploratória
+
+```{r}
+# 1. Histograma de tempo ate inicio da copula
+hist(sim_Afix50$ttot, main = "", xlab = "Tempo até início da cópula")
+
+# 2. Scatter Plots
+
+## 2.1 Tempo ate amplexo vs Prob. do macho ser escolhido
+p1.50 = ggplot(sim_Afix50, aes(prob, ttot, color=prob)) +
+  geom_point(shape=16, size = .2, show.legend = F, alpha = .5) +
+  theme_minimal() +
+  scale_color_gradient(low = "darkseagreen1", high = "darkslategrey") +
+  xlab("\nProb. do macho ser escolhido") +
+  ylab("Tempo até início da cópula\n")
+
+## 2.2 Tempo ate amplexo vs taxa de foot-flagging
+p2.50 = ggplot(sim_Afix50, aes(footpad, ttot, color=footpad)) +
+  geom_point(shape=16, size=.2, show.legend=F, alpha = .5) +
+  theme_minimal() +
+  scale_color_gradient(low = "darkseagreen1", high = "darkslategrey") +
+  xlab("\nTaxa de foot-flagging (n eventos/min)") +
+  ylab("Tempo até início da cópula\n")
+
+## 2.3 Tempo ate amplexo vs DF
+p3.50 = ggplot(sim_Afix50, aes(freqpad, ttot, color=freqpad)) +
+  geom_point(shape=16, size=.05, show.legend=F, alpha = .5) +
+  theme_minimal() +
+  scale_color_gradient(low = "darkseagreen1", high = "darkslategrey") +
+  xlab("\nFrequência dominante (Hz)") +
+  ylab("Tempo até início da cópula\n")
+
+## 2.4 Tempo ate amplexo vs SVL
+p4.50 = ggplot(sim_Afix50, aes(tamapad, ttot, color=tamapad)) +
+  geom_point(shape=16, size=.05, show.legend=F, alpha = .5) +
+  theme_minimal() +
+  scale_color_gradient(low = "darkseagreen1", high = "darkslategrey") +
+  xlab("\nTamanho corporal (mm)") +
+  ylab("Tempo até início da cópula\n")
+
+grid.arrange(p1.50, p2.50, p3.50, p4.50, nrow = 2)
+```
+
+Modelos
+
+```{r}
+
+```
+
+### 4.1.3 Área fixa em 100
+
+Análise exploratória
+
+```{r}
+
+```
+
+Modelos
+
+```{r}
+
+```
 
 ## 4.2 Simulação com área variável
 
 ### 4.2.1 Análise exploratória
 ```{r echo=FALSE}
-# Histograma de tempo até início da cópula
+# 1. Histograma de tempo ate inicio da copula
 hist(sim_Avar$ttot, main = "", xlab = "Tempo até início da cópula")
-par(mfrow = c(2,2))
-plot(sim_Avar$ttot ~ sim_Avar$prob)
-plot(sim_Avar$ttot ~ sim_Avar$footpad)
-plot(sim_Avar$ttot ~ sim_Avar$freqpad)
-plot(sim_Avar$ttot ~ sim_Avar$tamapad)
-par(mfrow = c(1,1))
+
+# 2. Scatter Plots
+
+## 2.1 Tempo ate amplexo vs Prob. do macho ser escolhido
+p1.var = ggplot(sim_Avar, aes(prob, ttot, color=prob)) +
+  geom_point(shape=16, size = .2, show.legend = F, alpha = .5) +
+  theme_minimal() +
+  scale_color_gradient(low = "darkseagreen1", high = "darkslategrey") +
+  xlab("\nProb. do macho ser escolhido") +
+  ylab("Tempo até início da cópula\n")
+
+## 2.2 Tempo ate amplexo vs taxa de foot-flagging
+p2.var = ggplot(sim_Avar, aes(footpad, ttot, color=footpad)) +
+  geom_point(shape=16, size=.2, show.legend=F, alpha = .5) +
+  theme_minimal() +
+  scale_color_gradient(low = "darkseagreen1", high = "darkslategrey") +
+  xlab("\nTaxa de foot-flagging (n eventos/min)") +
+  ylab("Tempo até início da cópula\n")
+
+## 2.3 Tempo ate amplexo vs DF
+p3.var = ggplot(sim_Avar, aes(freqpad, ttot, color=freqpad)) +
+  geom_point(shape=16, size=.05, show.legend=F, alpha = .5) +
+  theme_minimal() +
+  scale_color_gradient(low = "darkseagreen1", high = "darkslategrey") +
+  xlab("\nFrequência dominante (Hz)") +
+  ylab("Tempo até início da cópula\n")
+
+## 2.4 Tempo ate amplexo vs SVL
+p4.var = ggplot(sim_Avar, aes(tamapad, ttot, color=tamapad)) +
+  geom_point(shape=16, size=.05, show.legend=F, alpha = .5) +
+  theme_minimal() +
+  scale_color_gradient(low = "darkseagreen1", high = "darkslategrey") +
+  xlab("\nTamanho corporal (mm)") +
+  ylab("Tempo até início da cópula\n")
+
+grid.arrange(p1.var, p2.var, p3.var, p4.var, nrow = 2)
 ```
 
 ### 4.2.2 GLMM x GLM
@@ -246,6 +343,8 @@ glmmfull = glmer(ttot~tamapad*freqpad*footpad*I(area^2) + (1|nsim), family = Gam
 
 # Error in pwrssUpdate(pp, resp, tol = tolPwrss, GQmat = GQmat, compDev = compDev,  : 
 #   PIRLS loop resulted in NaN value
+
+summary(lm(ttot~tamapad*freqpad*footpad*I(area^2), data=sim_Avar))
 ```
 
 Por esse motivo, comparamos o modelo aleatório mais simples possível, apenas com a probabilidade de seleção dos machos. Pelo funcionamento da simulação, a variável <code>prob</code> deve abarcar toda a informação de <code>freq</code>, <code>foot</code> e <code>tama</code>. No entanto, essa probabilidade não é biologicamente plausível de ser coletada, e usamos aqui apenas para verificar a necessidade do uso do modelo misto.
