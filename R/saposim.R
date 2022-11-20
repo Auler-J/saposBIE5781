@@ -56,7 +56,7 @@ saposim = function(nsim = 1000, vecarea = round(runif(nsim, 10, 100), 0), vecnma
     mfoot[mfoot<0] = 0
     
     sfreq = dados$dcach*(10*(1/area))
-    mfreq = 5700 - mean(sfreq) +sfreq
+    mfreq = 5700 - mean(sfreq) + sfreq
     
     stama = dados$dcach*(0.5*(1/area))
     mtama = 40.4 - mean(stama) + stama
