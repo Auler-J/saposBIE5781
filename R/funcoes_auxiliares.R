@@ -38,3 +38,54 @@ logit2prob <- function(logit){
   prob <- odds / (1 + odds)
   return(prob)
 }
+
+#plots para analise exploratoria
+require(ggplot2, hrbrthemes, gridExtra)
+
+AED = function(dados){
+  dev.new()
+  # 1. Histograma de tempo ate inicio da copula
+  hist <- ggplot(dados, aes(x=ttot)) +
+    geom_histogram( binwidth=3, fill="#69b3a2", color="#e9ecef", alpha=0.9) +
+    xlab("Tempo até início da cópula")
+    theme_minimal() +
+    theme(
+      plot.title = element_text(size=15)
+    )
+  
+  # 2. Scatter Plots
+  
+  ## 2.1 Tempo ate amplexo vs Prob. do macho ser escolhido
+  p1 = ggplot(dados, aes(prob, ttot, color=prob)) +
+    geom_point(shape=16, size = .2, show.legend = F, alpha = .5) +
+    theme_minimal() +
+    scale_color_gradient(low = "darkseagreen1", high = "darkslategrey") +
+    xlab("\nProb. do macho ser escolhido") +
+    ylab("Tempo até início da cópula\n")
+  
+  ## 2.2 Tempo ate amplexo vs taxa de foot-flagging
+  p2 = ggplot(dados, aes(footpad, ttot, color=footpad)) +
+    geom_point(shape=16, size=.2, show.legend=F, alpha = .5) +
+    theme_minimal() +
+    scale_color_gradient(low = "darkseagreen1", high = "darkslategrey") +
+    xlab("\nTaxa de foot-flagging (n eventos/min)") +
+    ylab("Tempo até início da cópula\n")
+  
+  ## 2.3 Tempo ate amplexo vs DF
+  p3 = ggplot(dados, aes(freqpad, ttot, color=freqpad)) +
+    geom_point(shape=16, size=.05, show.legend=F, alpha = .5) +
+    theme_minimal() +
+    scale_color_gradient(low = "darkseagreen1", high = "darkslategrey") +
+    xlab("\nFrequência dominante (Hz)") +
+    ylab("Tempo até início da cópula\n")
+  
+  ## 2.4 Tempo ate amplexo vs SVL
+  p4 = ggplot(dados, aes(tamapad, ttot, color=tamapad)) +
+    geom_point(shape=16, size=.05, show.legend=F, alpha = .5) +
+    theme_minimal() +
+    scale_color_gradient(low = "darkseagreen1", high = "darkslategrey") +
+    xlab("\nTamanho corporal (mm)") +
+    ylab("Tempo até início da cópula\n")
+  
+  grid.arrange(p1, p2, hist, p3, p4, nrow = 2)
+}
