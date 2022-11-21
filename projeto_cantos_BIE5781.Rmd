@@ -131,7 +131,7 @@ load("data/sim_Afix50.Rdata")
 load("data/sim_Afix100.Rdata")
 ```
 
-Para exemplificar, as primeiras linhas do dataset com área variada:
+Para exemplificar, as primeiras linhas do dataset simulado com área variada:
 
 ```{r}
 head(sim_Avar)
@@ -172,7 +172,7 @@ summary(sim_Afix100) #arrumar dps pra rodar
 
 # 4. Análises
 
-Pacotes utilizados
+Os seguintes pacotes foram utilizados para as análises estatísticas e plotagem:
 ```{r message=FALSE, warning=FALSE}
 library(AICcmodavg)
 library(ggplot2)
@@ -195,56 +195,58 @@ AED(sim_Afix10, binw = 3)
 
 #### 4.1.1.2 Modelos
 
-Optamos pelo uso de modelos generalizados mistos, pois pode haver um efeito aleatório de cada rio (a variação entre rios pode ser maior do que a variação dentro de um mesmo rio). Além disso, optamos por utilizar a distribuição Gama, pois estamos interessados no tempo até a fêmea escolher um macho e iniciar o amplexo.
-
 <details>
 
   <summary>Modelos com área fixa em 10</summary>
 ```{r message=FALSE, warning=FALSE}
 # 1. GLMM Cheio: efeito aleatório das cachoeiras sobre o intercepto + efeito fixo com tripla interação 
-glmm10.1 = glmer(ttot~tamapad*freqpad*footpad + (1|nsim), family=Gamma, data=sim_Afix10)
+library(glmmTMB)
+glmm10.1t = glmmTMB(ttot~tamapad*freqpad*footpad+(1|nsim), family=Gamma(link="log"), data=sim_Afix10)
+
+
+glmm10.1 = glmer(ttot~tamapad*freqpad*footpad + (1|nsim), family=Gamma(link="log"), data=sim_Afix10)
 
 # 2. GLMM sem tripla
-glmm10.2 = glmer(ttot~tamapad+freqpad+footpad+tamapad:freqpad+tamapad:footpad+freqpad:footpad + (1|nsim), family=Gamma, data=sim_Afix10)
+glmm10.2 = glmer(ttot~tamapad+freqpad+footpad+tamapad:freqpad+tamapad:footpad+freqpad:footpad + (1|nsim), family=Gamma(link="log"), data=sim_Afix10)
 
 # 3. GLMM sem 1 dupla: freqpad:footpad
-glmm10.3 = glmer(ttot~tamapad+freqpad+footpad+tamapad:freqpad+tamapad:footpad + (1|nsim), family=Gamma, data=sim_Afix10)
+glmm10.3 = glmer(ttot~tamapad+freqpad+footpad+tamapad:freqpad+tamapad:footpad + (1|nsim), family=Gamma(link="log"), data=sim_Afix10)
 
 # 4. GLMM sem 1 dupla: tamapad:footpad
-glmm10.4 = glmer(ttot~tamapad+freqpad+footpad+tamapad:freqpad+freqpad:footpad + (1|nsim), family=Gamma, data=sim_Afix10)
+glmm10.4 = glmer(ttot~tamapad+freqpad+footpad+tamapad:freqpad+freqpad:footpad + (1|nsim), family=Gamma(link="log"), data=sim_Afix10)
 
 # 5. GLMM sem 1 dupla: tamapad:freqpad
-glmm10.5 = glmer(ttot~tamapad+freqpad+footpad+tamapad:footpad+freqpad:footpad + (1|nsim), family=Gamma, data=sim_Afix10)
+glmm10.5 = glmer(ttot~tamapad+freqpad+footpad+tamapad:footpad+freqpad:footpad + (1|nsim), family=Gamma(link="log"), data=sim_Afix10)
 
 # 6. GLMM sem 2 duplas: freqpad:footpad e tamapad:footpad
-glmm10.6 = glmer(ttot~tamapad+freqpad+footpad+tamapad:freqpad + (1|nsim), family=Gamma, data=sim_Afix10)
+glmm10.6 = glmer(ttot~tamapad+freqpad+footpad+tamapad:freqpad + (1|nsim), family=Gamma(link="log"), data=sim_Afix10)
 
 # 7. GLMM sem 2 duplas: tamapad:footpad e tamapad:freqpad
-glmm10.7 = glmer(ttot~tamapad+freqpad+footpad+freqpad:footpad + (1|nsim), family=Gamma, data=sim_Afix10)
+glmm10.7 = glmer(ttot~tamapad+freqpad+footpad+freqpad:footpad + (1|nsim), family=Gamma(link="log"), data=sim_Afix10)
 
 # 8. GLMM sem 2 duplas: freqpad:footpad e tamapad:freqpad
-glmm10.8 = glmer(ttot~tamapad+freqpad+footpad+tamapad:footpad + (1|nsim), family=Gamma, data=sim_Afix10)
+glmm10.8 = glmer(ttot~tamapad+freqpad+footpad+tamapad:footpad + (1|nsim), family=Gamma(link="log"), data=sim_Afix10)
 
 # 9. GLMM sem nenhuma dupla
-glmm10.9 = glmer(ttot~tamapad+freqpad+footpad + (1|nsim), family=Gamma, data=sim_Afix10)
+glmm10.9 = glmer(ttot~tamapad+freqpad+footpad + (1|nsim), family=Gamma(link="log"), data=sim_Afix10)
 
 # 10. GLMM sem freqpad
-glmm10.10 = glmer(ttot~tamapad+footpad + (1|nsim), family=Gamma, data=sim_Afix10)
+glmm10.10 = glmer(ttot~tamapad+footpad + (1|nsim), family=Gamma(link="log"), data=sim_Afix10)
 
 # 11. GLMM sem footpad
-glmm10.11 = glmer(ttot~tamapad+freqpad + (1|nsim), family=Gamma, data=sim_Afix10)
+glmm10.11 = glmer(ttot~tamapad+freqpad + (1|nsim), family=Gamma(link="log"), data=sim_Afix10)
 
 # 12. GLMM sem tamapad
-glmm10.12 = glmer(ttot~freqpad+footpad + (1|nsim), family=Gamma, data=sim_Afix10)
+glmm10.12 = glmer(ttot~freqpad+footpad + (1|nsim), family=Gamma(link="log"), data=sim_Afix10)
 
 # 13. GLMM só com freqpad
-glmm10.13 = glmer(ttot~freqpad + (1|nsim), family=Gamma, data=sim_Afix10)
+glmm10.13 = glmer(ttot~freqpad + (1|nsim), family=Gamma(link="log"), data=sim_Afix10)
 
 # 14. GLMM só com footpad
-glmm10.14 = glmer(ttot~footpad + (1|nsim), family=Gamma, data=sim_Afix10)
+glmm10.14 = glmer(ttot~footpad + (1|nsim), family=Gamma(link="log"), data=sim_Afix10)
 
 # 15. GLMM só com tamapad
-glmm10.15 = glmer(ttot~tamapad + (1|nsim), family=Gamma, data=sim_Afix10)
+glmm10.15 = glmer(ttot~tamapad + (1|nsim), family=Gamma(link="log"), data=sim_Afix10)
 ```
 </details>
 
@@ -296,7 +298,7 @@ AED(sim_Afix50, binw = 70)
 #  PIRLS loop resulted in NaN value
 
 # 1. GLMM Cheio: efeito aleatório das cachoeiras sobre o intercepto + efeito fixo com tripla interação 
-glmm50.1 = glmer(ttot~tamapad*freqpad*footpad + (1|nsim), family=Gamma, data=sim_Afix50)
+glmm50.1 = glmer(ttot~tamapad*freqpad*footpad + (1|nsim), family=Gamma(link="log"), data=sim_Afix50)
 
 # 2. GLMM sem tripla
 glmm50.2 = glmer(ttot~tamapad+freqpad+footpad+tamapad:freqpad+tamapad:footpad+freqpad:footpad + (1|nsim), family=Gamma, data=sim_Afix50)
@@ -370,8 +372,9 @@ AED(sim_Afix100, binw = 100)
 
   <summary>Modelos com área fixa em 100</summary>
 ```{r}
-# 1. GLMM Cheio: efeito aleatório das cachoeiras sobre o intercepto + efeito fixo com tripla interação 
-glmm100.1 = glmer(ttot~tamapad*freqpad*footpad + (1|nsim), family=Gamma, data=sim_Afix100)
+# 1. GLMM Cheio: efeito aleatório das cachoeiras sobre o intercepto + efeito fixo com tripla interação
+
+glmm100.1 = glmer(ttot~tamapad*freqpad*footpad + (1|nsim), family=Gamma(link="log"), data=sim_Afix100)
 
 # 2. GLMM sem tripla
 glmm100.2 = glmer(ttot~tamapad+freqpad+footpad+tamapad:freqpad+tamapad:footpad+freqpad:footpad + (1|nsim), family=Gamma, data=sim_Afix100)
@@ -444,7 +447,10 @@ AED(sim_Avar, binw = 200)
   <summary>Modelos com área variável</summary>
 ```{r}
 # 1. GLMM Cheio: efeito aleatório das cachoeiras sobre o intercepto + efeito fixo com tripla interação 
-glmmvar.1 = glmer(ttot~tamapad*freqpad*footpad + (1|nsim), family=Gamma, data=sim_Avar)
+
+teste = sim_Avar %>% filter(!row_number() %in% c(1:990000))
+
+glmmvar.1 = glmer(ttot~tamapad*freqpad*footpad + (1|nsim), family=Gamma, data=teste)
 
 # 2. GLMM sem tripla
 glmmvar.2 = glmer(ttot~tamapad+freqpad+footpad+tamapad:freqpad+tamapad:footpad+freqpad:footpad + (1|nsim), family=Gamma, data=sim_Avar)
