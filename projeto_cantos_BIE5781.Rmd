@@ -170,6 +170,8 @@ summary(sim_Afix100) #arrumar dps pra rodar
 
 # 4. Análises
 
+**GLMM FAQ: https://bbolker.github.io/mixedmodels-misc/glmmFAQ.html#reml-for-glmms**
+
 Pacotes utilizados
 ```{r message=FALSE, warning=FALSE}
 library(AICcmodavg)
@@ -265,7 +267,7 @@ AED(sim_Afix50, binw = 70)
 <details>
 
   <summary>Modelos com área fixa em 50</summary>
-```{r}
+```{r eval=FALSE}
 # 1. GLMM Cheio: efeito aleatório das cachoeiras sobre o intercepto + efeito fixo com tripla interação 
 glmm50.1 = glmer(ttot~tamapad*freqpad*footpad + (1|nsim), family=Gamma, data=sim_Afix50)
 
@@ -313,7 +315,7 @@ glmm50.15 = glmer(ttot~tamapad + (1|nsim), family=Gamma, data=sim_Afix50)
 ```
 </details>
 
-```{r}
+```{r eval=FALSE}
 # Seleção de modelo
 models50 = c(glmm50.1, glmm50.2, glmm50.3, glmm50.4, glmm50.5, glmm50.6, glmm50.7, glmm50.8, glmm50.9, glmm50.10, glmm50.11, glmm50.12, glmm50.13, glmm50.14, glmm50.15)
 model.names50 = gsub("10", "50", model.names10)
