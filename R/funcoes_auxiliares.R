@@ -42,9 +42,10 @@ logit2prob <- function(logit){
 #plots para analise exploratoria
 AED = function(dados, binw){
   # 1. Histograma de tempo ate inicio da copula
-  hist = geom_histogram(binwidth = binw, fill="#55a370", color = "darkslategrey", alpha=0.9) +
-  xlab("\nTempo até início da cópula") +
-  theme_minimal()  
+  hist <- ggplot(dados, aes(x=ttot)) +
+    geom_histogram(binwidth = binw, fill="#55a370", color = "darkslategrey", alpha=0.9) +
+    xlab("Tempo até início da cópula") +
+    theme_minimal()
   # 2. Scatter Plots
   
   ## 2.1 Tempo ate amplexo vs Prob. do macho ser escolhido

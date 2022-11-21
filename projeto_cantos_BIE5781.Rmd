@@ -2,7 +2,12 @@
 title: "Como sinais multimodais influenciam o tempo até o início do amplexo?"
 author: "Daniel YM Nakamura e Jennifer P Auler"
 date: '2022-11-08'
-output: html_document
+output: 
+  html_document:
+    toc: true
+    toc_depth: 3
+    toc_float: true
+    number_sections: true
 editor_options: 
   chunk_output_type: console
 ---
@@ -11,7 +16,7 @@ editor_options:
 knitr::opts_chunk$set(echo = TRUE)
 ```
 
-# 1. Introdução
+# Introdução
 
 <center><img src="fig1.png" width="400"></center>
 <center>Figura 1: Ilustração de rã-de-corredeira (Hylodidae: Hylodes asper). Fonte: Paulo Presti.</center>
@@ -22,7 +27,7 @@ Em anuros, o canto de anúncio é aquele emitido por machos para atrair fêmeas 
 
 Existem sinais multimodais compostos por características morfológicas, acústicas e visuais que são consideradas mais atrativas pelas fêmeas e podem explicar o tempo até sua chegada e início do amplexo. Por exemplo, uma possível preditora acústica é a **frequência dominante** do canto (DF: a banda com maior concentração de energia no espectro; Köhler et al. 2017), no qual cantos mais graves são considerados mais atrativos e talvez reduzam o tempo até o início do amplexo, pois machos com canto mais grave geralmente tem cordas vocais mais espessas e compridas (McClelland et al. 1996), o que geralmente é um sinal honesto que informa o tamanho corporal do macho (Wells 2007; Köhler et al. 2017). Contudo, existem machos que mentem! Machos mentirosos são comuns em algumas espécies, os quais conseguem modular a frequência do canto (i.e. deixar mais grave por relaxamento dos músculos da cartilagem aritenóide; Martin 1971; Schmid 1979; Ryan 1988). Por isso, incluir o **tamanho corporal** como uma variável preditora é uma forma de avaliar a honestidade da frequência. Por fim, machos da espécie *Hylodes asper* às vezes cantam ao mesmo tempo em que apresentam um display visual chamado <strong><em>foot-flagging</em></strong>, no qual esticam as pernas para chamarem atenção das fêmeas visualmente devido ao barulho das corredeiras que podem reduzir as chances de serem escutados pelas fêmeas (Heyer et al. 1990; Haddad & Giaretta 1999). Portanto, uma última hipótese é que uma taxa de foot-flagging alta reduza o tempo até as fêmeas iniciarem o amplexo.
 
-# 2. Objetivos e hipóteses
+# Objetivos e hipóteses
 
 O objetivo geral desse trabalho é responder como sinais multi-modais influenciam o tempo até o início do amplexo em *Hylodes asper*. Os objetivos específicos são entender:
 
@@ -43,7 +48,7 @@ O objetivo geral desse trabalho é responder como sinais multi-modais influencia
 
 \
 
-# 3. Simulação de dados
+# Simulação de dados
 
 Embora dados das nossas variáveis preditoras sejam mais acessíveis na literatura, dados da nossa variável resposta (tempo de espera da fêmea até início da cópula) são escassos. Isso ocorre pois é extremamente custoso ao biólogo de campo tentar localizar uma fêmea de anuro próxima dos machos já que elas não cantam e raramente são vistas na natureza. Portanto, optamos pelo uso de dados simulados.
 
@@ -112,15 +117,16 @@ Além do efeito das características dos sapos, decidimos também investigar se 
 * <code>sim_Afix100</code> - dimensões da cachoeira (<code>area</code>) fixa em 100.
 
 
-Em ambas as simulações foram mantidas os valores padrão, com exceção de <code>nsim</code>, que foi fixado em 10000. Os valores padrão da função são:
+Em ambas as simulações foram mantidas os valores padrão:
 
+* <code>nsim</code> = 1000
 * <code>vecarea = round(runif(nsim, 10, 100), 0)</code>
 * <code>vecnmacho = vecarea</code>
 * <code>cffreq</code> = 1.05
 * <code>cftama</code> = -0.5
 * <code>cffoot</code> = -0.8
 
-O código das simulações está no documento "R/simula_dados.R". Como <code>nsim</code> é muito grande e leva alguns minutos, salvamos o resultado das simulações como arquivos <code>R.data</code>.
+O código das simulações está no documento "R/simula_dados.R". Como <code>nsim</code> é grande e leva alguns minutos, salvamos o resultado das simulações como arquivos <code>R.data</code>.
 
 ```{r}
 load("data/sim_Avar.Rdata")
@@ -168,14 +174,13 @@ summary(sim_Afix100) #arrumar dps pra rodar
 ```
 </details>
 
-# 4. Análises
-
-**GLMM FAQ: https://bbolker.github.io/mixedmodels-misc/glmmFAQ.html#reml-for-glmms**
+# Análises
+**Por que usamos a distribuição Gamma**
+A distribuição Gamma é uma gereralização da distribuição exponencial e é uma boa opção para modelar o tempo até N eventos ocorrerem. Esta distribuição possui dois parâmetros: shape (k) e scale (\theta). Como nossa variável é o tempo até um determinado macho atingir amplexo, a distribuição Gammma é apropriada. É frequente que os GLMM Gamma sejam difícies de implementar, especialmente utilizando a função de ligação canônica <code>"inverse"</code> (Bolker at al 2022). Por esse motivo, alguns autores, como Lo e Andrews (2015) indicam utiliar a função de ligação <code>"log"</code>, a qual utilizaremos aqui.
 
 Pacotes utilizados
 ```{r message=FALSE, warning=FALSE}
 library(AICcmodavg)
-#library(hrbrthemes)
 library(ggplot2)
 library(gridExtra)
 library(lme4)
@@ -184,64 +189,64 @@ library(bbmle)
 library(interactions)
 ```
 
-## 4.1 Simulação com área fixa
+## Simulação com área fixa
 
-### 4.1.1 Área fixa em 10
+### Área fixa em 10
 
 #### Análise exploratória
 ```{r fig.align = 'center'}
 AED(sim_Afix10, binw = 3)
 ```
 
-**Explicar por que usamos o Gamma**. Modelos
+#### Modelos
 <details>
 
   <summary>Modelos com área fixa em 10</summary>
 ```{r message=FALSE, warning=FALSE}
 # 1. GLMM Cheio: efeito aleatório das cachoeiras sobre o intercepto + efeito fixo com tripla interação 
-glmm10.1 = glmer(ttot~tamapad*freqpad*footpad + (1|nsim), family=Gamma, data=sim_Afix10)
+glmm10.1 = glmer(ttot~tamapad*freqpad*footpad + (1|nsim), family=Gamma(link = "log"), data=sim_Afix10)
 
 # 2. GLMM sem tripla
-glmm10.2 = glmer(ttot~tamapad+freqpad+footpad+tamapad:freqpad+tamapad:footpad+freqpad:footpad + (1|nsim), family=Gamma, data=sim_Afix10)
+glmm10.2 = glmer(ttot~tamapad+freqpad+footpad+tamapad:freqpad+tamapad:footpad+freqpad:footpad + (1|nsim), family=Gamma(link = "log"), data=sim_Afix10)
 
 # 3. GLMM sem 1 dupla: freqpad:footpad
-glmm10.3 = glmer(ttot~tamapad+freqpad+footpad+tamapad:freqpad+tamapad:footpad + (1|nsim), family=Gamma, data=sim_Afix10)
+glmm10.3 = glmer(ttot~tamapad+freqpad+footpad+tamapad:freqpad+tamapad:footpad + (1|nsim), family=Gamma(link = "log"), data=sim_Afix10)
 
 # 4. GLMM sem 1 dupla: tamapad:footpad
-glmm10.4 = glmer(ttot~tamapad+freqpad+footpad+tamapad:freqpad+freqpad:footpad + (1|nsim), family=Gamma, data=sim_Afix10)
+glmm10.4 = glmer(ttot~tamapad+freqpad+footpad+tamapad:freqpad+freqpad:footpad + (1|nsim), family=Gamma(link = "log"), data=sim_Afix10)
 
 # 5. GLMM sem 1 dupla: tamapad:freqpad
-glmm10.5 = glmer(ttot~tamapad+freqpad+footpad+tamapad:footpad+freqpad:footpad + (1|nsim), family=Gamma, data=sim_Afix10)
+glmm10.5 = glmer(ttot~tamapad+freqpad+footpad+tamapad:footpad+freqpad:footpad + (1|nsim), family=Gamma(link = "log"), data=sim_Afix10)
 
 # 6. GLMM sem 2 duplas: freqpad:footpad e tamapad:footpad
-glmm10.6 = glmer(ttot~tamapad+freqpad+footpad+tamapad:freqpad + (1|nsim), family=Gamma, data=sim_Afix10)
+glmm10.6 = glmer(ttot~tamapad+freqpad+footpad+tamapad:freqpad + (1|nsim), family=Gamma(link = "log"), data=sim_Afix10)
 
 # 7. GLMM sem 2 duplas: tamapad:footpad e tamapad:freqpad
-glmm10.7 = glmer(ttot~tamapad+freqpad+footpad+freqpad:footpad + (1|nsim), family=Gamma, data=sim_Afix10)
+glmm10.7 = glmer(ttot~tamapad+freqpad+footpad+freqpad:footpad + (1|nsim), family=Gamma(link = "log"), data=sim_Afix10)
 
 # 8. GLMM sem 2 duplas: freqpad:footpad e tamapad:freqpad
-glmm10.8 = glmer(ttot~tamapad+freqpad+footpad+tamapad:footpad + (1|nsim), family=Gamma, data=sim_Afix10)
+glmm10.8 = glmer(ttot~tamapad+freqpad+footpad+tamapad:footpad + (1|nsim), family=Gamma(link = "log"), data=sim_Afix10)
 
 # 9. GLMM sem nenhuma dupla
-glmm10.9 = glmer(ttot~tamapad+freqpad+footpad + (1|nsim), family=Gamma, data=sim_Afix10)
+glmm10.9 = glmer(ttot~tamapad+freqpad+footpad + (1|nsim), family=Gamma(link = "log"), data=sim_Afix10)
 
 # 10. GLMM sem freqpad
-glmm10.10 = glmer(ttot~tamapad+footpad + (1|nsim), family=Gamma, data=sim_Afix10)
+glmm10.10 = glmer(ttot~tamapad+footpad + (1|nsim), family=Gamma(link = "log"), data=sim_Afix10)
 
 # 11. GLMM sem footpad
-glmm10.11 = glmer(ttot~tamapad+freqpad + (1|nsim), family=Gamma, data=sim_Afix10)
+glmm10.11 = glmer(ttot~tamapad+freqpad + (1|nsim), family=Gamma(link = "log"), data=sim_Afix10)
 
 # 12. GLMM sem tamapad
-glmm10.12 = glmer(ttot~freqpad+footpad + (1|nsim), family=Gamma, data=sim_Afix10)
+glmm10.12 = glmer(ttot~freqpad+footpad + (1|nsim), family=Gamma(link = "log"), data=sim_Afix10)
 
 # 13. GLMM só com freqpad
-glmm10.13 = glmer(ttot~freqpad + (1|nsim), family=Gamma, data=sim_Afix10)
+glmm10.13 = glmer(ttot~freqpad + (1|nsim), family=Gamma(link = "log"), data=sim_Afix10)
 
 # 14. GLMM só com footpad
-glmm10.14 = glmer(ttot~footpad + (1|nsim), family=Gamma, data=sim_Afix10)
+glmm10.14 = glmer(ttot~footpad + (1|nsim), family=Gamma(link = "log"), data=sim_Afix10)
 
 # 15. GLMM só com tamapad
-glmm10.15 = glmer(ttot~tamapad + (1|nsim), family=Gamma, data=sim_Afix10)
+glmm10.15 = glmer(ttot~tamapad + (1|nsim), family=Gamma(link = "log"), data=sim_Afix10)
 ```
 </details>
 
@@ -254,7 +259,7 @@ aictab(cand.set=models10, modnames=model.names10)
 summary(glmm10.1)
 ```
 
-### 4.1.2 Área fixa em 50
+### Área fixa em 50
 
 #### Análise exploratória
 
@@ -267,55 +272,55 @@ AED(sim_Afix50, binw = 70)
 <details>
 
   <summary>Modelos com área fixa em 50</summary>
-```{r eval=FALSE}
+```{r message=FALSE, warning=FALSE}
 # 1. GLMM Cheio: efeito aleatório das cachoeiras sobre o intercepto + efeito fixo com tripla interação 
-glmm50.1 = glmer(ttot~tamapad*freqpad*footpad + (1|nsim), family=Gamma, data=sim_Afix50)
+glmm50.1 = glmer(ttot~tamapad*freqpad*footpad + (1|nsim), family=Gamma(link = "log"), data=sim_Afix50)
 
 # 2. GLMM sem tripla
-glmm50.2 = glmer(ttot~tamapad+freqpad+footpad+tamapad:freqpad+tamapad:footpad+freqpad:footpad + (1|nsim), family=Gamma, data=sim_Afix50)
+glmm50.2 = glmer(ttot~tamapad+freqpad+footpad+tamapad:freqpad+tamapad:footpad+freqpad:footpad + (1|nsim), family=Gamma(link = "log"), data=sim_Afix50)
 
 # 3. GLMM sem 1 dupla: freqpad:footpad
-glmm50.3 = glmer(ttot~tamapad+freqpad+footpad+tamapad:freqpad+tamapad:footpad + (1|nsim), family=Gamma, data=sim_Afix50)
+glmm50.3 = glmer(ttot~tamapad+freqpad+footpad+tamapad:freqpad+tamapad:footpad + (1|nsim), family=Gamma(link = "log"), data=sim_Afix50)
 
 # 4. GLMM sem 1 dupla: tamapad:footpad
-glmm50.4 = glmer(ttot~tamapad+freqpad+footpad+tamapad:freqpad+freqpad:footpad + (1|nsim), family=Gamma, data=sim_Afix50)
+glmm50.4 = glmer(ttot~tamapad+freqpad+footpad+tamapad:freqpad+freqpad:footpad + (1|nsim), family=Gamma(link = "log"), data=sim_Afix50)
 
 # 5. GLMM sem 1 dupla: tamapad:freqpad
-glmm50.5 = glmer(ttot~tamapad+freqpad+footpad+tamapad:footpad+freqpad:footpad + (1|nsim), family=Gamma, data=sim_Afix50)
+glmm50.5 = glmer(ttot~tamapad+freqpad+footpad+tamapad:footpad+freqpad:footpad + (1|nsim), family=Gamma(link = "log"), data=sim_Afix50)
 
 # 6. GLMM sem 2 duplas: freqpad:footpad e tamapad:footpad
-glmm50.6 = glmer(ttot~tamapad+freqpad+footpad+tamapad:freqpad + (1|nsim), family=Gamma, data=sim_Afix50)
+glmm50.6 = glmer(ttot~tamapad+freqpad+footpad+tamapad:freqpad + (1|nsim), family=Gamma(link = "log"), data=sim_Afix50)
 
 # 7. GLMM sem 2 duplas: tamapad:footpad e tamapad:freqpad
-glmm50.7 = glmer(ttot~tamapad+freqpad+footpad+freqpad:footpad + (1|nsim), family=Gamma, data=sim_Afix50)
+glmm50.7 = glmer(ttot~tamapad+freqpad+footpad+freqpad:footpad + (1|nsim), family=Gamma(link = "log"), data=sim_Afix50)
 
 # 8. GLMM sem 2 duplas: freqpad:footpad e tamapad:freqpad
-glmm50.8 = glmer(ttot~tamapad+freqpad+footpad+tamapad:footpad + (1|nsim), family=Gamma, data=sim_Afix50)
+glmm50.8 = glmer(ttot~tamapad+freqpad+footpad+tamapad:footpad + (1|nsim), family=Gamma(link = "log"), data=sim_Afix50)
 
 # 9. GLMM sem nenhuma dupla
-glmm50.9 = glmer(ttot~tamapad+freqpad+footpad + (1|nsim), family=Gamma, data=sim_Afix50)
+glmm50.9 = glmer(ttot~tamapad+freqpad+footpad + (1|nsim), family=Gamma(link = "log"), data=sim_Afix50)
 
 # 10. GLMM sem freqpad
-glmm50.10 = glmer(ttot~tamapad+footpad + (1|nsim), family=Gamma, data=sim_Afix50)
+glmm50.10 = glmer(ttot~tamapad+footpad + (1|nsim), family=Gamma(link = "log"), data=sim_Afix50)
 
 # 11. GLMM sem footpad
-glmm50.11 = glmer(ttot~tamapad+freqpad + (1|nsim), family=Gamma, data=sim_Afix50)
+glmm50.11 = glmer(ttot~tamapad+freqpad + (1|nsim), family=Gamma(link = "log"), data=sim_Afix50)
 
 # 12. GLMM sem tamapad
-glmm50.12 = glmer(ttot~freqpad+footpad + (1|nsim), family=Gamma, data=sim_Afix50)
+glmm50.12 = glmer(ttot~freqpad+footpad + (1|nsim), family=Gamma(link = "log"), data=sim_Afix50)
 
 # 13. GLMM só com freqpad
-glmm50.13 = glmer(ttot~freqpad + (1|nsim), family=Gamma, data=sim_Afix50)
+glmm50.13 = glmer(ttot~freqpad + (1|nsim), family=Gamma(link = "log"), data=sim_Afix50)
 
 # 14. GLMM só com footpad
-glmm50.14 = glmer(ttot~footpad + (1|nsim), family=Gamma, data=sim_Afix50)
+glmm50.14 = glmer(ttot~footpad + (1|nsim), family=Gamma(link = "log"), data=sim_Afix50)
 
 # 15. GLMM só com tamapad
-glmm50.15 = glmer(ttot~tamapad + (1|nsim), family=Gamma, data=sim_Afix50)
+glmm50.15 = glmer(ttot~tamapad + (1|nsim), family=Gamma(link = "log"), data=sim_Afix50)
 ```
 </details>
 
-```{r eval=FALSE}
+```{r}
 # Seleção de modelo
 models50 = c(glmm50.1, glmm50.2, glmm50.3, glmm50.4, glmm50.5, glmm50.6, glmm50.7, glmm50.8, glmm50.9, glmm50.10, glmm50.11, glmm50.12, glmm50.13, glmm50.14, glmm50.15)
 model.names50 = gsub("10", "50", model.names10)
@@ -325,12 +330,12 @@ summary(glmm50.1)
 ```
 
 
-### 4.1.3 Área fixa em 100
+### Área fixa em 100
 
 #### Análise exploratória
 
 ```{r}
-AED(sim_Afix100, binw = 100)
+AED(sim_Afix100, binw = 200)
 ```
 
 #### Modelos
@@ -338,51 +343,51 @@ AED(sim_Afix100, binw = 100)
 <details>
 
   <summary>Modelos com área fixa em 100</summary>
-```{r}
+```{r message=FALSE, warning=FALSE}
 # 1. GLMM Cheio: efeito aleatório das cachoeiras sobre o intercepto + efeito fixo com tripla interação 
-glmm100.1 = glmer(ttot~tamapad*freqpad*footpad + (1|nsim), family=Gamma, data=sim_Afix100)
+glmm100.1 = glmer(ttot~tamapad*freqpad*footpad + (1|nsim), family=Gamma(link = "log"), data=sim_Afix100)
 
 # 2. GLMM sem tripla
-glmm100.2 = glmer(ttot~tamapad+freqpad+footpad+tamapad:freqpad+tamapad:footpad+freqpad:footpad + (1|nsim), family=Gamma, data=sim_Afix100)
+glmm100.2 = glmer(ttot~tamapad+freqpad+footpad+tamapad:freqpad+tamapad:footpad+freqpad:footpad + (1|nsim), family=Gamma(link = "log"), data=sim_Afix100)
 
 # 3. GLMM sem 1 dupla: freqpad:footpad
-glmm100.3 = glmer(ttot~tamapad+freqpad+footpad+tamapad:freqpad+tamapad:footpad + (1|nsim), family=Gamma, data=sim_Afix100)
+glmm100.3 = glmer(ttot~tamapad+freqpad+footpad+tamapad:freqpad+tamapad:footpad + (1|nsim), family=Gamma(link = "log"), data=sim_Afix100)
 
 # 4. GLMM sem 1 dupla: tamapad:footpad
-glmm100.4 = glmer(ttot~tamapad+freqpad+footpad+tamapad:freqpad+freqpad:footpad + (1|nsim), family=Gamma, data=sim_Afix100)
+glmm100.4 = glmer(ttot~tamapad+freqpad+footpad+tamapad:freqpad+freqpad:footpad + (1|nsim), family=Gamma(link = "log"), data=sim_Afix100)
 
 # 5. GLMM sem 1 dupla: tamapad:freqpad
-glmm100.5 = glmer(ttot~tamapad+freqpad+footpad+tamapad:footpad+freqpad:footpad + (1|nsim), family=Gamma, data=sim_Afix100)
+glmm100.5 = glmer(ttot~tamapad+freqpad+footpad+tamapad:footpad+freqpad:footpad + (1|nsim), family=Gamma(link = "log"), data=sim_Afix100)
 
 # 6. GLMM sem 2 duplas: freqpad:footpad e tamapad:footpad
-glmm100.6 = glmer(ttot~tamapad+freqpad+footpad+tamapad:freqpad + (1|nsim), family=Gamma, data=sim_Afix100)
+glmm100.6 = glmer(ttot~tamapad+freqpad+footpad+tamapad:freqpad + (1|nsim), family=Gamma(link = "log"), data=sim_Afix100)
 
 # 7. GLMM sem 2 duplas: tamapad:footpad e tamapad:freqpad
-glmm100.7 = glmer(ttot~tamapad+freqpad+footpad+freqpad:footpad + (1|nsim), family=Gamma, data=sim_Afix100)
+glmm100.7 = glmer(ttot~tamapad+freqpad+footpad+freqpad:footpad + (1|nsim), family=Gamma(link = "log"), data=sim_Afix100)
 
 # 8. GLMM sem 2 duplas: freqpad:footpad e tamapad:freqpad
-glmm100.8 = glmer(ttot~tamapad+freqpad+footpad+tamapad:footpad + (1|nsim), family=Gamma, data=sim_Afix100)
+glmm100.8 = glmer(ttot~tamapad+freqpad+footpad+tamapad:footpad + (1|nsim), family=Gamma(link = "log"), data=sim_Afix100)
 
 # 9. GLMM sem nenhuma dupla
-glmm100.9 = glmer(ttot~tamapad+freqpad+footpad + (1|nsim), family=Gamma, data=sim_Afix100)
+glmm100.9 = glmer(ttot~tamapad+freqpad+footpad + (1|nsim), family=Gamma(link = "log"), data=sim_Afix100)
 
 # 10. GLMM sem freqpad
-glmm100.10 = glmer(ttot~tamapad+footpad + (1|nsim), family=Gamma, data=sim_Afix100)
+glmm100.10 = glmer(ttot~tamapad+footpad + (1|nsim), family=Gamma(link = "log"), data=sim_Afix100)
 
 # 11. GLMM sem footpad
-glmm100.11 = glmer(ttot~tamapad+freqpad + (1|nsim), family=Gamma, data=sim_Afix100)
+glmm100.11 = glmer(ttot~tamapad+freqpad + (1|nsim), family=Gamma(link = "log"), data=sim_Afix100)
 
 # 12. GLMM sem tamapad
-glmm100.12 = glmer(ttot~freqpad+footpad + (1|nsim), family=Gamma, data=sim_Afix100)
+glmm100.12 = glmer(ttot~freqpad+footpad + (1|nsim), family=Gamma(link = "log"), data=sim_Afix100)
 
 # 13. GLMM só com freqpad
-glmm100.13 = glmer(ttot~freqpad + (1|nsim), family=Gamma, data=sim_Afix100)
+glmm100.13 = glmer(ttot~freqpad + (1|nsim), family=Gamma(link = "log"), data=sim_Afix100)
 
 # 14. GLMM só com footpad
-glmm100.14 = glmer(ttot~footpad + (1|nsim), family=Gamma, data=sim_Afix100)
+glmm100.14 = glmer(ttot~footpad + (1|nsim), family=Gamma(link = "log"), data=sim_Afix100)
 
 # 15. GLMM só com tamapad
-glmm100.15 = glmer(ttot~tamapad + (1|nsim), family=Gamma, data=sim_Afix100)
+glmm100.15 = glmer(ttot~tamapad + (1|nsim), family=Gamma(link = "log"), data=sim_Afix100)
 ```
 </details>
 
@@ -395,63 +400,63 @@ aictab(cand.set=models100, modnames=model.names100)
 summary(glmm100.1)
 ```
 
-## 4.2 Simulação com área variável
+## Simulação com área variável
 
-### 4.2.1 Análise exploratória
-```{r echo=FALSE}
+### Análise exploratória
+```{r}
 AED(sim_Avar, binw = 200)
 ```
 
-### 4.2.2 Modelos
+### Modelos
 
 <details>
 
   <summary>Modelos com área variável</summary>
-```{r}
+```{r message=FALSE, warning=FALSE}
 # 1. GLMM Cheio: efeito aleatório das cachoeiras sobre o intercepto + efeito fixo com tripla interação 
-glmmvar.1 = glmer(ttot~tamapad*freqpad*footpad + (1|nsim), family=Gamma, data=sim_Avar)
+glmmvar.1 = glmer(ttot~tamapad*freqpad*footpad + (1|nsim), family=Gamma(link = "log"), data=sim_Avar)
 
 # 2. GLMM sem tripla
-glmmvar.2 = glmer(ttot~tamapad+freqpad+footpad+tamapad:freqpad+tamapad:footpad+freqpad:footpad + (1|nsim), family=Gamma, data=sim_Avar)
+glmmvar.2 = glmer(ttot~tamapad+freqpad+footpad+tamapad:freqpad+tamapad:footpad+freqpad:footpad + (1|nsim), family=Gamma(link = "log"), data=sim_Avar)
 
 # 3. GLMM sem 1 dupla: freqpad:footpad
-glmmvar.3 = glmer(ttot~tamapad+freqpad+footpad+tamapad:freqpad+tamapad:footpad + (1|nsim), family=Gamma, data=sim_Avar)
+glmmvar.3 = glmer(ttot~tamapad+freqpad+footpad+tamapad:freqpad+tamapad:footpad + (1|nsim), family=Gamma(link = "log"), data=sim_Avar)
 
 # 4. GLMM sem 1 dupla: tamapad:footpad
-glmmvar.4 = glmer(ttot~tamapad+freqpad+footpad+tamapad:freqpad+freqpad:footpad + (1|nsim), family=Gamma, data=sim_Avar)
+glmmvar.4 = glmer(ttot~tamapad+freqpad+footpad+tamapad:freqpad+freqpad:footpad + (1|nsim), family=Gamma(link = "log"), data=sim_Avar)
 
 # 5. GLMM sem 1 dupla: tamapad:freqpad
-glmmvar.5 = glmer(ttot~tamapad+freqpad+footpad+tamapad:footpad+freqpad:footpad + (1|nsim), family=Gamma, data=sim_Avar)
+glmmvar.5 = glmer(ttot~tamapad+freqpad+footpad+tamapad:footpad+freqpad:footpad + (1|nsim), family=Gamma(link = "log"), data=sim_Avar)
 
 # 6. GLMM sem 2 duplas: freqpad:footpad e tamapad:footpad
-glmmvar.6 = glmer(ttot~tamapad+freqpad+footpad+tamapad:freqpad + (1|nsim), family=Gamma, data=sim_Avar)
+glmmvar.6 = glmer(ttot~tamapad+freqpad+footpad+tamapad:freqpad + (1|nsim), family=Gamma(link = "log"), data=sim_Avar)
 
 # 7. GLMM sem 2 duplas: tamapad:footpad e tamapad:freqpad
-glmmvar.7 = glmer(ttot~tamapad+freqpad+footpad+freqpad:footpad + (1|nsim), family=Gamma, data=sim_Avar)
+glmmvar.7 = glmer(ttot~tamapad+freqpad+footpad+freqpad:footpad + (1|nsim), family=Gamma(link = "log"), data=sim_Avar)
 
 # 8. GLMM sem 2 duplas: freqpad:footpad e tamapad:freqpad
-glmmvar.8 = glmer(ttot~tamapad+freqpad+footpad+tamapad:footpad + (1|nsim), family=Gamma, data=sim_Avar)
+glmmvar.8 = glmer(ttot~tamapad+freqpad+footpad+tamapad:footpad + (1|nsim), family=Gamma(link = "log"), data=sim_Avar)
 
 # 9. GLMM sem nenhuma dupla
-glmmvar.9 = glmer(ttot~tamapad+freqpad+footpad + (1|nsim), family=Gamma, data=sim_Avar)
+glmmvar.9 = glmer(ttot~tamapad+freqpad+footpad + (1|nsim), family=Gamma(link = "log"), data=sim_Avar)
 
 # 10. GLMM sem freqpad
-glmmvar.10 = glmer(ttot~tamapad+footpad + (1|nsim), family=Gamma, data=sim_Avar)
+glmmvar.10 = glmer(ttot~tamapad+footpad + (1|nsim), family=Gamma(link = "log"), data=sim_Avar)
 
 # 11. GLMM sem footpad
-glmmvar.11 = glmer(ttot~tamapad+freqpad + (1|nsim), family=Gamma, data=sim_Avar)
+glmmvar.11 = glmer(ttot~tamapad+freqpad + (1|nsim), family=Gamma(link = "log"), data=sim_Avar)
 
 # 12. GLMM sem tamapad
-glmmvar.12 = glmer(ttot~freqpad+footpad + (1|nsim), family=Gamma, data=sim_Avar)
+glmmvar.12 = glmer(ttot~freqpad+footpad + (1|nsim), family=Gamma(link = "log"), data=sim_Avar)
 
 # 13. GLMM só com freqpad
-glmmvar.13 = glmer(ttot~freqpad + (1|nsim), family=Gamma, data=sim_Avar)
+glmmvar.13 = glmer(ttot~freqpad + (1|nsim), family=Gamma(link = "log"), data=sim_Avar)
 
 # 14. GLMM só com footpad
-glmmvar.14 = glmer(ttot~footpad + (1|nsim), family=Gamma, data=sim_Avar)
+glmmvar.14 = glmer(ttot~footpad + (1|nsim), family=Gamma(link = "log"), data=sim_Avar)
 
 # 15. GLMM só com tamapad
-glmmvar.15 = glmer(ttot~tamapad + (1|nsim), family=Gamma, data=sim_Avar)
+glmmvar.15 = glmer(ttot~tamapad + (1|nsim), family=Gamma(link = "log"), data=sim_Avar)
 ```
 </details>
 
@@ -464,9 +469,9 @@ aictab(cand.set=modelsvar, modnames=model.namesvar)
 summary(glmmvar.1)
 ```
 
-### 4.2.2 GLMM x GLM (EDITAR: VER SE É NECESSÁRIO TESTAR GLMs)
+### GLMM x GLM (EDITAR: VER SE É NECESSÁRIO TESTAR GLMs)
 A principio, acreditamos que o GLMM é mais adequado para nossa estrutura de dados. No entanto, o modelo que gostaríamos de fazer não converge.
-```{r eval=FALSE}
+```{r eval = FALSE}
 # O modelo full nao converge:
 
 glmmfull = glmer(ttot~tamapad*freqpad*footpad*I(area^2) + (1|nsim), family = Gamma, data=sim_Avar)
@@ -479,10 +484,10 @@ summary(lm(ttot~tamapad*freqpad*footpad*I(area^2), data=sim_Avar))
 
 Por esse motivo, comparamos o modelo aleatório mais simples possível, apenas com a probabilidade de seleção dos machos. Pelo funcionamento da simulação, a variável <code>prob</code> deve abarcar toda a informação de <code>freq</code>, <code>foot</code> e <code>tama</code>. No entanto, essa probabilidade não é biologicamente plausível de ser coletada, e usamos aqui apenas para verificar a necessidade do uso do modelo misto.
 ```{r}
-glmmP = glmer(ttot~prob + (1|nsim), family = Gamma, data=sim_Avar)
+glmmP = glmer(ttot~prob + (1|nsim), family = Gamma(link = "log"), data=sim_Avar)
 
 #Comparando o glmm com o glm:
-glmP = glm(ttot~prob, family = Gamma, data=sim_Avar)
+glmP = glm(ttot~prob, family = Gamma(link = "log"), data=sim_Avar)
 
 #Nao da pra descartar o efeito aleatorio
 AICtab(glmmP, glmP)
@@ -490,11 +495,13 @@ AICtab(glmmP, glmP)
 
 O GLMM é infinitamente melhor que o GLM.
 
-# 5. Resultados
+# Resultados
 
-# 6. Discussão
+# Discussão
 
-# 7. Referências
+# Referências
+
+Bolker at al 2022. GLMM FAQ <https://bbolker.github.io/mixedmodels-misc/glmmFAQ.html#reml-for-glmms>.
 
 Duellman, W. E., & Trueb, L. (1986). Biology of Amphibians McGraw-Hill Inc. Nueva York, EUA.
 
@@ -509,6 +516,8 @@ Heyer, W. R., Rand, A. S., da Cruz, C. A. G., Peixoto, O. L., & Nelson, C. E. (1
 Hödl, W., Rodrigues, M. T., Accacio, G. M., Lara, P. H., Pavan, D., Schiesari, L., & Skuk, G. (1997). Foot-flagging display in the Brazilian stream-breeding frog *Hylodes asper* (Leptodactylidae). Scientific film, Ctf, 2703.
 
 Köhler, J., Jansen, M., Rodríguez, A., Kok, P. J. R., Toledo, L. F., Emmrich, M., Glaw F., Haddad, C. F. B., Rodel, M., Vences, M. (2017). The use of bioacoustics in anuran taxonomy: Theory, terminology, methods and recommendations for best practice. Zootaxa, 4251, 1–124.
+
+Lo, Steson, and Sally Andrews. 2015. “To Transform or Not to Transform: Using Generalized Linear Mixed Models to Analyse Reaction Time Data.” Frontiers in Psychology 6. https://doi.org/10.3389/fpsyg.2015.01171.
 
 Martin, W. F. (1971). Mechanics of sound production in toads of the genus Bufo: passive elements. Journal of Experimental Zoology, 176(3), 273-293.
 
