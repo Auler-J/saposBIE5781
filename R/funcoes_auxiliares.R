@@ -40,10 +40,7 @@ logit2prob <- function(logit){
 }
 
 #plots para analise exploratoria
-require(ggplot2, hrbrthemes, gridExtra)
-
 AED = function(dados){
-  dev.new()
   # 1. Histograma de tempo ate inicio da copula
   hist <- ggplot(dados, aes(x=ttot)) +
     geom_histogram( binwidth=3, fill="#69b3a2", color="#e9ecef", alpha=0.9) +

@@ -163,7 +163,7 @@ summary(sim_Afix50)
 <details>
 
   <summary>Sumário de sim_Afix100</summary>
-```{r eval=FALSE}
+```{r}
 summary(sim_Afix100) #arrumar dps pra rodar
 ```
 </details>
@@ -179,6 +179,7 @@ library(gridExtra)
 library(lme4)
 library(MASS)
 library(bbmle)
+library(interactions)
 ```
 
 ## 4.1 Simulação com área fixa
@@ -191,7 +192,7 @@ AED(sim_Afix10)
 ```
 
 **Explicar por que usamos o Gamma**. Modelos
-```{r eval=FALSE}
+```{r message=FALSE, warning=FALSE}
 # 1. GLMM Cheio: efeito aleatório das cachoeiras sobre o intercepto + efeito fixo com tripla interação 
 glmm10.1 = glmer(ttot~tamapad*freqpad*footpad + (1|nsim), family=Gamma, data=sim_Afix10)
 
@@ -245,7 +246,6 @@ aictab(cand.set=models10, modnames=model.names10)
 summary(glmm10.1)
 
 # Plot
-library(interactions)
 interact_plot(glmm10.1, pred=tamapad, modx=freqpad, plot.points = F, interval = T)
 ```
 
@@ -268,7 +268,7 @@ AED(sim_Afix50)
 #### Análise exploratória
 
 ```{r}
-
+AED(sim_Afix100)
 ```
 
 #### Modelos
@@ -281,44 +281,7 @@ AED(sim_Afix50)
 
 ### 4.2.1 Análise exploratória
 ```{r echo=FALSE}
-# 1. Histograma de tempo ate inicio da copula
-hist(sim_Avar$ttot, main = "", xlab = "Tempo até início da cópula")
-
-# 2. Scatter Plots
-
-## 2.1 Tempo ate amplexo vs Prob. do macho ser escolhido
-p1.var = ggplot(sim_Avar, aes(prob, ttot, color=prob)) +
-  geom_point(shape=16, size = .2, show.legend = F, alpha = .5) +
-  theme_minimal() +
-  scale_color_gradient(low = "darkseagreen1", high = "darkslategrey") +
-  xlab("\nProb. do macho ser escolhido") +
-  ylab("Tempo até início da cópula\n")
-
-## 2.2 Tempo ate amplexo vs taxa de foot-flagging
-p2.var = ggplot(sim_Avar, aes(footpad, ttot, color=footpad)) +
-  geom_point(shape=16, size=.2, show.legend=F, alpha = .5) +
-  theme_minimal() +
-  scale_color_gradient(low = "darkseagreen1", high = "darkslategrey") +
-  xlab("\nTaxa de foot-flagging (n eventos/min)") +
-  ylab("Tempo até início da cópula\n")
-
-## 2.3 Tempo ate amplexo vs DF
-p3.var = ggplot(sim_Avar, aes(freqpad, ttot, color=freqpad)) +
-  geom_point(shape=16, size=.05, show.legend=F, alpha = .5) +
-  theme_minimal() +
-  scale_color_gradient(low = "darkseagreen1", high = "darkslategrey") +
-  xlab("\nFrequência dominante (Hz)") +
-  ylab("Tempo até início da cópula\n")
-
-## 2.4 Tempo ate amplexo vs SVL
-p4.var = ggplot(sim_Avar, aes(tamapad, ttot, color=tamapad)) +
-  geom_point(shape=16, size=.05, show.legend=F, alpha = .5) +
-  theme_minimal() +
-  scale_color_gradient(low = "darkseagreen1", high = "darkslategrey") +
-  xlab("\nTamanho corporal (mm)") +
-  ylab("Tempo até início da cópula\n")
-
-grid.arrange(p1.var, p2.var, p3.var, p4.var, nrow = 2)
+AED(sim_Avar)
 ```
 
 ### 4.2.2 GLMM x GLM
