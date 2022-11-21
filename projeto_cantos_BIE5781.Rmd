@@ -173,7 +173,7 @@ summary(sim_Afix100) #arrumar dps pra rodar
 Pacotes utilizados
 ```{r message=FALSE, warning=FALSE}
 library(AICcmodavg)
-library(hrbrthemes)
+#library(hrbrthemes)
 library(ggplot2)
 library(gridExtra)
 library(lme4)
@@ -192,7 +192,10 @@ AED(sim_Afix10, binw = 3)
 ```
 
 **Explicar por que usamos o Gamma**. Modelos
-```{r}
+<details>
+
+  <summary>Modelos com área fixa em 10</summary>
+```{r message=FALSE, warning=FALSE}
 # 1. GLMM Cheio: efeito aleatório das cachoeiras sobre o intercepto + efeito fixo com tripla interação 
 glmm10.1 = glmer(ttot~tamapad*freqpad*footpad + (1|nsim), family=Gamma, data=sim_Afix10)
 
@@ -237,16 +240,16 @@ glmm10.14 = glmer(ttot~footpad + (1|nsim), family=Gamma, data=sim_Afix10)
 
 # 15. GLMM só com tamapad
 glmm10.15 = glmer(ttot~tamapad + (1|nsim), family=Gamma, data=sim_Afix10)
+```
+</details>
 
+```{r}
 # Seleção do Modelo
 models10 = c(glmm10.1, glmm10.2, glmm10.3, glmm10.4, glmm10.5, glmm10.6, glmm10.7, glmm10.8, glmm10.9, glmm10.10, glmm10.11, glmm10.12, glmm10.13, glmm10.14, glmm10.15)
 model.names10 = c("glmm10.1", "glmm10.2", "glmm10.3", "glmm10.4", "glmm10.5", "glmm10.6", "glmm10.7", "glmm10.8", "glmm10.9", "glmm10.10", "glmm10.11", "glmm10.12", "glmm10.13", "glmm10.14", "glmm10.15")
 aictab(cand.set=models10, modnames=model.names10)
 
 summary(glmm10.1)
-
-# Plot
-interact_plot(glmm10.1, pred=tamapad, modx=freqpad, plot.points = F, interval = T)
 ```
 
 ### 4.1.2 Área fixa em 50
@@ -259,9 +262,66 @@ AED(sim_Afix50, binw = 70)
 
 #### Modelos
 
-```{r}
+<details>
 
+  <summary>Modelos com área fixa em 50</summary>
+```{r}
+# 1. GLMM Cheio: efeito aleatório das cachoeiras sobre o intercepto + efeito fixo com tripla interação 
+glmm50.1 = glmer(ttot~tamapad*freqpad*footpad + (1|nsim), family=Gamma, data=sim_Afix50)
+
+# 2. GLMM sem tripla
+glmm50.2 = glmer(ttot~tamapad+freqpad+footpad+tamapad:freqpad+tamapad:footpad+freqpad:footpad + (1|nsim), family=Gamma, data=sim_Afix50)
+
+# 3. GLMM sem 1 dupla: freqpad:footpad
+glmm50.3 = glmer(ttot~tamapad+freqpad+footpad+tamapad:freqpad+tamapad:footpad + (1|nsim), family=Gamma, data=sim_Afix50)
+
+# 4. GLMM sem 1 dupla: tamapad:footpad
+glmm50.4 = glmer(ttot~tamapad+freqpad+footpad+tamapad:freqpad+freqpad:footpad + (1|nsim), family=Gamma, data=sim_Afix50)
+
+# 5. GLMM sem 1 dupla: tamapad:freqpad
+glmm50.5 = glmer(ttot~tamapad+freqpad+footpad+tamapad:footpad+freqpad:footpad + (1|nsim), family=Gamma, data=sim_Afix50)
+
+# 6. GLMM sem 2 duplas: freqpad:footpad e tamapad:footpad
+glmm50.6 = glmer(ttot~tamapad+freqpad+footpad+tamapad:freqpad + (1|nsim), family=Gamma, data=sim_Afix50)
+
+# 7. GLMM sem 2 duplas: tamapad:footpad e tamapad:freqpad
+glmm50.7 = glmer(ttot~tamapad+freqpad+footpad+freqpad:footpad + (1|nsim), family=Gamma, data=sim_Afix50)
+
+# 8. GLMM sem 2 duplas: freqpad:footpad e tamapad:freqpad
+glmm50.8 = glmer(ttot~tamapad+freqpad+footpad+tamapad:footpad + (1|nsim), family=Gamma, data=sim_Afix50)
+
+# 9. GLMM sem nenhuma dupla
+glmm50.9 = glmer(ttot~tamapad+freqpad+footpad + (1|nsim), family=Gamma, data=sim_Afix50)
+
+# 10. GLMM sem freqpad
+glmm50.10 = glmer(ttot~tamapad+footpad + (1|nsim), family=Gamma, data=sim_Afix50)
+
+# 11. GLMM sem footpad
+glmm50.11 = glmer(ttot~tamapad+freqpad + (1|nsim), family=Gamma, data=sim_Afix50)
+
+# 12. GLMM sem tamapad
+glmm50.12 = glmer(ttot~freqpad+footpad + (1|nsim), family=Gamma, data=sim_Afix50)
+
+# 13. GLMM só com freqpad
+glmm50.13 = glmer(ttot~freqpad + (1|nsim), family=Gamma, data=sim_Afix50)
+
+# 14. GLMM só com footpad
+glmm50.14 = glmer(ttot~footpad + (1|nsim), family=Gamma, data=sim_Afix50)
+
+# 15. GLMM só com tamapad
+glmm50.15 = glmer(ttot~tamapad + (1|nsim), family=Gamma, data=sim_Afix50)
 ```
+</details>
+
+```{r}
+# Seleção de modelo
+models50 = c(glmm50.1, glmm50.2, glmm50.3, glmm50.4, glmm50.5, glmm50.6, glmm50.7, glmm50.8, glmm50.9, glmm50.10, glmm50.11, glmm50.12, glmm50.13, glmm50.14, glmm50.15)
+model.names50 = gsub("10", "50", model.names10)
+aictab(cand.set=models50, modnames=model.names50)
+
+summary(glmm50.1)
+```
+
 
 ### 4.1.3 Área fixa em 100
 
@@ -273,8 +333,64 @@ AED(sim_Afix100, binw = 100)
 
 #### Modelos
 
-```{r}
+<details>
 
+  <summary>Modelos com área fixa em 100</summary>
+```{r}
+# 1. GLMM Cheio: efeito aleatório das cachoeiras sobre o intercepto + efeito fixo com tripla interação 
+glmm100.1 = glmer(ttot~tamapad*freqpad*footpad + (1|nsim), family=Gamma, data=sim_Afix100)
+
+# 2. GLMM sem tripla
+glmm100.2 = glmer(ttot~tamapad+freqpad+footpad+tamapad:freqpad+tamapad:footpad+freqpad:footpad + (1|nsim), family=Gamma, data=sim_Afix100)
+
+# 3. GLMM sem 1 dupla: freqpad:footpad
+glmm100.3 = glmer(ttot~tamapad+freqpad+footpad+tamapad:freqpad+tamapad:footpad + (1|nsim), family=Gamma, data=sim_Afix100)
+
+# 4. GLMM sem 1 dupla: tamapad:footpad
+glmm100.4 = glmer(ttot~tamapad+freqpad+footpad+tamapad:freqpad+freqpad:footpad + (1|nsim), family=Gamma, data=sim_Afix100)
+
+# 5. GLMM sem 1 dupla: tamapad:freqpad
+glmm100.5 = glmer(ttot~tamapad+freqpad+footpad+tamapad:footpad+freqpad:footpad + (1|nsim), family=Gamma, data=sim_Afix100)
+
+# 6. GLMM sem 2 duplas: freqpad:footpad e tamapad:footpad
+glmm100.6 = glmer(ttot~tamapad+freqpad+footpad+tamapad:freqpad + (1|nsim), family=Gamma, data=sim_Afix100)
+
+# 7. GLMM sem 2 duplas: tamapad:footpad e tamapad:freqpad
+glmm100.7 = glmer(ttot~tamapad+freqpad+footpad+freqpad:footpad + (1|nsim), family=Gamma, data=sim_Afix100)
+
+# 8. GLMM sem 2 duplas: freqpad:footpad e tamapad:freqpad
+glmm100.8 = glmer(ttot~tamapad+freqpad+footpad+tamapad:footpad + (1|nsim), family=Gamma, data=sim_Afix100)
+
+# 9. GLMM sem nenhuma dupla
+glmm100.9 = glmer(ttot~tamapad+freqpad+footpad + (1|nsim), family=Gamma, data=sim_Afix100)
+
+# 10. GLMM sem freqpad
+glmm100.10 = glmer(ttot~tamapad+footpad + (1|nsim), family=Gamma, data=sim_Afix100)
+
+# 11. GLMM sem footpad
+glmm100.11 = glmer(ttot~tamapad+freqpad + (1|nsim), family=Gamma, data=sim_Afix100)
+
+# 12. GLMM sem tamapad
+glmm100.12 = glmer(ttot~freqpad+footpad + (1|nsim), family=Gamma, data=sim_Afix100)
+
+# 13. GLMM só com freqpad
+glmm100.13 = glmer(ttot~freqpad + (1|nsim), family=Gamma, data=sim_Afix100)
+
+# 14. GLMM só com footpad
+glmm100.14 = glmer(ttot~footpad + (1|nsim), family=Gamma, data=sim_Afix100)
+
+# 15. GLMM só com tamapad
+glmm100.15 = glmer(ttot~tamapad + (1|nsim), family=Gamma, data=sim_Afix100)
+```
+</details>
+
+```{r}
+# Seleção de modelo
+models100 = c(glmm100.1, glmm100.2, glmm100.3, glmm100.4, glmm100.5, glmm100.6, glmm100.7, glmm100.8, glmm100.9, glmm100.10, glmm100.11, glmm100.12, glmm100.13, glmm100.14, glmm100.15)
+model.names100 = gsub("10", "100", model.names10)
+aictab(cand.set=models100, modnames=model.names100)
+
+summary(glmm100.1)
 ```
 
 ## 4.2 Simulação com área variável
@@ -284,7 +400,69 @@ AED(sim_Afix100, binw = 100)
 AED(sim_Avar, binw = 200)
 ```
 
-### 4.2.2 GLMM x GLM
+### 4.2.2 Modelos
+
+<details>
+
+  <summary>Modelos com área variável</summary>
+```{r}
+# 1. GLMM Cheio: efeito aleatório das cachoeiras sobre o intercepto + efeito fixo com tripla interação 
+glmmvar.1 = glmer(ttot~tamapad*freqpad*footpad + (1|nsim), family=Gamma, data=sim_Avar)
+
+# 2. GLMM sem tripla
+glmmvar.2 = glmer(ttot~tamapad+freqpad+footpad+tamapad:freqpad+tamapad:footpad+freqpad:footpad + (1|nsim), family=Gamma, data=sim_Avar)
+
+# 3. GLMM sem 1 dupla: freqpad:footpad
+glmmvar.3 = glmer(ttot~tamapad+freqpad+footpad+tamapad:freqpad+tamapad:footpad + (1|nsim), family=Gamma, data=sim_Avar)
+
+# 4. GLMM sem 1 dupla: tamapad:footpad
+glmmvar.4 = glmer(ttot~tamapad+freqpad+footpad+tamapad:freqpad+freqpad:footpad + (1|nsim), family=Gamma, data=sim_Avar)
+
+# 5. GLMM sem 1 dupla: tamapad:freqpad
+glmmvar.5 = glmer(ttot~tamapad+freqpad+footpad+tamapad:footpad+freqpad:footpad + (1|nsim), family=Gamma, data=sim_Avar)
+
+# 6. GLMM sem 2 duplas: freqpad:footpad e tamapad:footpad
+glmmvar.6 = glmer(ttot~tamapad+freqpad+footpad+tamapad:freqpad + (1|nsim), family=Gamma, data=sim_Avar)
+
+# 7. GLMM sem 2 duplas: tamapad:footpad e tamapad:freqpad
+glmmvar.7 = glmer(ttot~tamapad+freqpad+footpad+freqpad:footpad + (1|nsim), family=Gamma, data=sim_Avar)
+
+# 8. GLMM sem 2 duplas: freqpad:footpad e tamapad:freqpad
+glmmvar.8 = glmer(ttot~tamapad+freqpad+footpad+tamapad:footpad + (1|nsim), family=Gamma, data=sim_Avar)
+
+# 9. GLMM sem nenhuma dupla
+glmmvar.9 = glmer(ttot~tamapad+freqpad+footpad + (1|nsim), family=Gamma, data=sim_Avar)
+
+# 10. GLMM sem freqpad
+glmmvar.10 = glmer(ttot~tamapad+footpad + (1|nsim), family=Gamma, data=sim_Avar)
+
+# 11. GLMM sem footpad
+glmmvar.11 = glmer(ttot~tamapad+freqpad + (1|nsim), family=Gamma, data=sim_Avar)
+
+# 12. GLMM sem tamapad
+glmmvar.12 = glmer(ttot~freqpad+footpad + (1|nsim), family=Gamma, data=sim_Avar)
+
+# 13. GLMM só com freqpad
+glmmvar.13 = glmer(ttot~freqpad + (1|nsim), family=Gamma, data=sim_Avar)
+
+# 14. GLMM só com footpad
+glmmvar.14 = glmer(ttot~footpad + (1|nsim), family=Gamma, data=sim_Avar)
+
+# 15. GLMM só com tamapad
+glmmvar.15 = glmer(ttot~tamapad + (1|nsim), family=Gamma, data=sim_Avar)
+```
+</details>
+
+```{r}
+# Seleção de modelo
+modelsvar = c(glmmvar.1, glmmvar.2, glmmvar.3, glmmvar.4, glmmvar.5, glmmvar.6, glmmvar.7, glmmvar.8, glmmvar.9, glmmvar.10, glmmvar.11, glmmvar.12, glmmvar.13, glmmvar.14, glmmvar.15)
+model.namesvar = gsub("10", "var", model.names10)
+aictab(cand.set=modelsvar, modnames=model.namesvar)
+
+summary(glmmvar.1)
+```
+
+### 4.2.2 GLMM x GLM (EDITAR: VER SE É NECESSÁRIO TESTAR GLMs)
 A principio, acreditamos que o GLMM é mais adequado para nossa estrutura de dados. No entanto, o modelo que gostaríamos de fazer não converge.
 ```{r eval=FALSE}
 # O modelo full nao converge:

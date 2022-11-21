@@ -43,9 +43,12 @@ logit2prob <- function(logit){
 AED = function(dados, binw){
   # 1. Histograma de tempo ate inicio da copula
   hist <- ggplot(dados, aes(x=ttot)) +
-    geom_histogram(binwidth = binw, fill="#55a370", color = "darkslategrey", alpha=0.9) +
-    xlab("Tempo até início da cópula") +
-    theme_minimal()
+    geom_histogram( binwidth=3, fill="#69b3a2", color="#e9ecef", alpha=0.9) +
+    xlab("\nTempo até início da cópula") +
+    theme_minimal() +
+    theme(
+      plot.title = element_text(size=15)
+    )
   
   # 2. Scatter Plots
   
