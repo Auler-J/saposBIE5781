@@ -195,21 +195,14 @@ library(interactions)
 
 ### Área fixa em 10
 
-#### 4.1.1.1 Análise exploratória
+#### Análise exploratória
 
 ```{r fig.align = 'center'}
 AED(sim_Afix10, binw = 3)
 ```
 
-<<<<<<< HEAD
 #### Modelos
-=======
-#### 4.1.1.2 Modelos
-
 Optamos pelo uso de modelos generalizados mistos, pois pode haver um efeito aleatório de cada rio (a variação entre rios pode ser maior do que a variação dentro de um mesmo rio). Além disso, optamos por utilizar a distribuição Gama, pois estamos interessados no tempo até a fêmea escolher um macho e iniciar o amplexo.
-
->>>>>>> 267d26bb8dd5ebb763cefe2666f3d583f78b8241
-<details>
 
   <summary>Modelos com área fixa em 10</summary>
 ```{r message=FALSE, warning=FALSE}
@@ -302,15 +295,8 @@ AED(sim_Afix50, binw = 70)
 <details>
 
   <summary>Modelos com área fixa em 50</summary>
-<<<<<<< HEAD
-```{r message=FALSE, warning=FALSE}
-=======
-```{r}
-#ERRO:
-#  Error in pwrssUpdate(pp, resp, tol = tolPwrss, GQmat = GQmat, compDev = compDev,  : 
-#  PIRLS loop resulted in NaN value
 
->>>>>>> 267d26bb8dd5ebb763cefe2666f3d583f78b8241
+```{r message=FALSE, warning=FALSE}
 # 1. GLMM Cheio: efeito aleatório das cachoeiras sobre o intercepto + efeito fixo com tripla interação 
 glmm50.1 = glmer(ttot~tamapad*freqpad*footpad + (1|nsim), family=Gamma(link = "log"), data=sim_Afix50)
 
