@@ -189,6 +189,10 @@ library(lme4)
 library(MASS)
 library(bbmle)
 library(interactions)
+library(tibble)
+library(tidyverse)
+library(broom)
+library(multcomp)
 ```
 
 ## Simulação com área fixa
@@ -269,11 +273,6 @@ aictab(cand.set=models10, modnames=model.names10, refit=FALSE)
 summary(glmm10.1)
 
 # Intervalo de confiança dos coeficientes das preditoras
-library(tibble)
-library(tidyverse)
-library(broom)
-library(multcomp)
-
 conf10 = as.data.frame(confint(glmm10.1, method="Wald"))
 conf10 = conf10[-(1:3),]
 conf10$coef = glmm10.1@beta[-1]
