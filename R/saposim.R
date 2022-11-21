@@ -9,7 +9,7 @@
 ## todos coeficientes sao usados para o calculo de probabilidade de selecao do macho.
 
 
-saposim = function(nsim = 1000, vecarea = round(runif(nsim, 10, 100), 0), vecnmacho= vecarea, cffreq = 1.05, cftama = -0.5, cffoot = -0.8){
+saposim = function(nsim = 1000, vecarea = round(runif(nsim, 10, 100), 0), vecnmacho= vecarea, cffreq = -1.05, cftama = 0.5, cffoot = 0.8){
   
   #checagem de input
   if(length(vecarea) != nsim){stop("vecarea deve ser um vetor de tamanho nsim")}

@@ -124,9 +124,9 @@ Em ambas as simulações foram mantidas os valores padrão:
 * <code>nsim</code> = 1000
 * <code>vecarea = round(runif(nsim, 10, 100), 0)</code>
 * <code>vecnmacho = vecarea</code>
-* <code>cffreq</code> = 1.05
-* <code>cftama</code> = -0.5
-* <code>cffoot</code> = -0.8
+* <code>cffreq</code> = -1.05
+* <code>cftama</code> = 0.5
+* <code>cffoot</code> = 0.8
 
 O código das simulações está no documento "R/simula_dados.R". Como <code>nsim</code> é grande e leva alguns minutos, salvamos o resultado das simulações como arquivos <code>R.data</code>.
 
