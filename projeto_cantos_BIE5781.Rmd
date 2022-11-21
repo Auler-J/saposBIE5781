@@ -117,8 +117,8 @@ Em ambas as simulações foram mantidas os valores padrão, com exceção de <co
 * <code>vecarea = round(runif(nsim, 10, 100), 0)</code>
 * <code>vecnmacho = vecarea</code>
 * <code>cffreq</code> = 1.05
-* <code>cftama</code> = 0.5
-* <code>cffoot</code> = 0.8
+* <code>cftama</code> = -0.5
+* <code>cffoot</code> = -0.8
 
 O código das simulações está no documento "R/simula_dados.R". Como <code>nsim</code> é muito grande e leva alguns minutos, salvamos o resultado das simulações como arquivos <code>R.data</code>.
 
@@ -188,11 +188,11 @@ library(interactions)
 
 Análise exploratória
 ```{r fig.align = 'center'}
-AED(sim_Afix10)
+AED(sim_Afix10, binw = 3)
 ```
 
 **Explicar por que usamos o Gamma**. Modelos
-```{r message=FALSE, warning=FALSE}
+```{r}
 # 1. GLMM Cheio: efeito aleatório das cachoeiras sobre o intercepto + efeito fixo com tripla interação 
 glmm10.1 = glmer(ttot~tamapad*freqpad*footpad + (1|nsim), family=Gamma, data=sim_Afix10)
 
@@ -254,7 +254,7 @@ interact_plot(glmm10.1, pred=tamapad, modx=freqpad, plot.points = F, interval = 
 #### Análise exploratória
 
 ```{r fig.align= 'center'}
-AED(sim_Afix50)
+AED(sim_Afix50, binw = 70)
 ```
 
 #### Modelos
@@ -268,7 +268,7 @@ AED(sim_Afix50)
 #### Análise exploratória
 
 ```{r}
-AED(sim_Afix100)
+AED(sim_Afix100, binw = 100)
 ```
 
 #### Modelos
@@ -281,7 +281,7 @@ AED(sim_Afix100)
 
 ### 4.2.1 Análise exploratória
 ```{r echo=FALSE}
-AED(sim_Avar)
+AED(sim_Avar, binw = 200)
 ```
 
 ### 4.2.2 GLMM x GLM

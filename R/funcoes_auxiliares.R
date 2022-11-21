@@ -40,15 +40,12 @@ logit2prob <- function(logit){
 }
 
 #plots para analise exploratoria
-AED = function(dados){
+AED = function(dados, binw){
   # 1. Histograma de tempo ate inicio da copula
   hist <- ggplot(dados, aes(x=ttot)) +
-    geom_histogram( binwidth=3, fill="#69b3a2", color="#e9ecef", alpha=0.9) +
-    xlab("Tempo até início da cópula")
-    theme_minimal() +
-    theme(
-      plot.title = element_text(size=15)
-    )
+    geom_histogram(binwidth = binw, fill="#55a370", color = "darkslategrey", alpha=0.9) +
+    xlab("Tempo até início da cópula") +
+    theme_minimal()
   
   # 2. Scatter Plots
   
@@ -61,7 +58,7 @@ AED = function(dados){
     ylab("Tempo até início da cópula\n")
   
   ## 2.2 Tempo ate amplexo vs taxa de foot-flagging
-  p2 = ggplot(dados, aes(footpad, ttot, color=footpad)) +
+  p2 = ggplot(dados, aes(foot, ttot, color=footpad)) +
     geom_point(shape=16, size=.2, show.legend=F, alpha = .5) +
     theme_minimal() +
     scale_color_gradient(low = "darkseagreen1", high = "darkslategrey") +
@@ -69,7 +66,7 @@ AED = function(dados){
     ylab("Tempo até início da cópula\n")
   
   ## 2.3 Tempo ate amplexo vs DF
-  p3 = ggplot(dados, aes(freqpad, ttot, color=freqpad)) +
+  p3 = ggplot(dados, aes(freq, ttot, color=freqpad)) +
     geom_point(shape=16, size=.05, show.legend=F, alpha = .5) +
     theme_minimal() +
     scale_color_gradient(low = "darkseagreen1", high = "darkslategrey") +
@@ -77,7 +74,7 @@ AED = function(dados){
     ylab("Tempo até início da cópula\n")
   
   ## 2.4 Tempo ate amplexo vs SVL
-  p4 = ggplot(dados, aes(tamapad, ttot, color=tamapad)) +
+  p4 = ggplot(dados, aes(tama, ttot, color=tamapad)) +
     geom_point(shape=16, size=.05, show.legend=F, alpha = .5) +
     theme_minimal() +
     scale_color_gradient(low = "darkseagreen1", high = "darkslategrey") +
