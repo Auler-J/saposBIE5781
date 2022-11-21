@@ -184,9 +184,9 @@ library(interactions)
 
 ## 4.1 Simulação com área fixa
 
-## 4.1.1 Área fixa em 10
+### 4.1.1 Área fixa em 10
 
-Análise exploratória
+#### Análise exploratória
 ```{r fig.align = 'center'}
 AED(sim_Afix10, binw = 3)
 ```
