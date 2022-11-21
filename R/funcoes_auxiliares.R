@@ -85,3 +85,37 @@ AED = function(dados, binw){
   
   grid.arrange(p1, p2, p3, p4, hist, nrow = 2)
 }
+
+#plots para linha de tendencia dos modelos
+linhatendencia = function(dados, pred){
+  
+  # 1. Scatter Plots
+  
+  ## 1.1 Tempo ate amplexo vs DF
+  p1 = ggplot(dados, aes(freqpad, ttot, color=freqpad)) +
+    geom_point(shape=16, size=.05, show.legend=F, alpha = .5) +
+    theme_minimal() +
+    scale_color_gradient(low = "darkseagreen1", high = "darkslategrey") +
+    xlab("\nFrequência dominante (Hz)") +
+    ylab("Tempo até início da cópula\n") +
+    geom_line(aes(y = pred), size = 1)
+  
+  ## 1.2 Tempo ate amplexo vs SVL
+  p2 = ggplot(dados, aes(tamapad, ttot, color=tamapad)) +
+    geom_point(shape=16, size=.05, show.legend=F, alpha = .5) +
+    theme_minimal() +
+    scale_color_gradient(low = "darkseagreen1", high = "darkslategrey") +
+    xlab("\nTamanho corporal (mm)") +
+    ylab("Tempo até início da cópula\n") +
+    geom_line(aes(y = pred), size = 1)
+  
+  ## 1.3 Tempo ate amplexo vs taxa de foot-flagging
+  p3 = ggplot(dados, aes(footpad, ttot, color=footpad)) +
+    geom_point(shape=16, size=.2, show.legend=F, alpha = .5) +
+    theme_minimal() +
+    scale_color_gradient(low = "darkseagreen1", high = "darkslategrey") +
+    xlab("\nTaxa de foot-flagging (n eventos/min)") +
+    ylab("Tempo até início da cópula\n") +
+    geom_line(aes(y = pred), size = 1)
+  grid.arrange(p1, p2, p3, nrow = 1)
+}
