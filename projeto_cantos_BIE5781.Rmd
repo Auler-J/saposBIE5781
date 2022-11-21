@@ -137,7 +137,7 @@ load("data/sim_Afix50.Rdata")
 load("data/sim_Afix100.Rdata")
 ```
 
-Para exemplificar, as primeiras linhas do dataset com área variada:
+Para exemplificar, as primeiras linhas do dataset simulado com área variada:
 
 ```{r}
 head(sim_Avar)
@@ -180,7 +180,7 @@ summary(sim_Afix100) #arrumar dps pra rodar
 **Por que usamos a distribuição Gamma** \
 A distribuição Gamma é uma gereralização da distribuição exponencial e é uma boa opção para modelar o tempo até N eventos ocorrerem. Esta distribuição possui dois parâmetros: shape (k) e scale ($\theta$). Como nossa variável é o tempo até um determinado macho atingir amplexo, a distribuição Gammma é apropriada. É frequente que os GLMM Gamma sejam difícies de implementar, especialmente utilizando a função de ligação canônica <code>"inverse"</code> (Bolker at al 2022). Por esse motivo, alguns autores, como Lo e Andrews (2015) indicam utiliar a função de ligação <code>"log"</code>, a qual utilizaremos aqui.
 
-Pacotes utilizados
+Os seguintes pacotes foram utilizados para as análises estatísticas e plotagem:
 ```{r message=FALSE, warning=FALSE}
 library(AICcmodavg)
 library(ggplot2)
@@ -208,6 +208,7 @@ Optamos pelo uso de modelos generalizados mistos, pois pode haver um efeito alea
   <summary>Modelos com área fixa em 10</summary>
 ```{r message=FALSE, warning=FALSE}
 # 1. GLMM Cheio: efeito aleatório das cachoeiras sobre o intercepto + efeito fixo com tripla interação 
+
 glmm10.1 = glmer(ttot~tamapad*freqpad*footpad + (1|nsim), family=Gamma(link = "log"), data=sim_Afix10)
 
 # 2. GLMM sem tripla
@@ -382,6 +383,7 @@ AED(sim_Afix100, binw = 200)
 <details>
 
   <summary>Modelos com área fixa em 100</summary>
+
 ```{r message=FALSE, warning=FALSE}
 # 1. GLMM Cheio: efeito aleatório das cachoeiras sobre o intercepto + efeito fixo com tripla interação 
 glmm100.1 = glmer(ttot~tamapad*freqpad*footpad + (1|nsim), family=Gamma(link = "log"), data=sim_Afix100)
