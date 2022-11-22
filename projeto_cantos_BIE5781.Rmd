@@ -209,6 +209,7 @@ AED(sim_Afix10, binw = 3)
 
 Optamos pelo uso de modelos generalizados mistos, pois pode haver um efeito aleatório de cada rio (a variação entre rios pode ser maior do que a variação dentro de um mesmo rio). Além disso, optamos por utilizar a distribuição Gama, pois estamos interessados no tempo até a fêmea escolher um macho e iniciar o amplexo.
 
+<details>
   <summary>Modelos com área fixa em 10</summary>
 ```{r message=FALSE, warning=FALSE}
 # 1. GLMM Cheio: efeito aleatório das cachoeiras sobre o intercepto + efeito fixo com tripla interação 
