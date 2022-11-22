@@ -177,22 +177,22 @@ summary(sim_Afix100) #arrumar dps pra rodar
 </details>
 
 # Resultados
-**Por que usamos a distribuição Gamma** \
+Optamos pelo uso de modelos generalizados mistos, pois pode haver um efeito aleatório de cada rio (a variação entre rios pode ser maior do que a variação dentro de um mesmo rio). Além disso, optamos por utilizar a distribuição Gama, pois estamos interessados no tempo até a fêmea escolher um macho e iniciar o amplexo.
 A distribuição Gamma é uma gereralização da distribuição exponencial e é uma boa opção para modelar o tempo até N eventos ocorrerem. Esta distribuição possui dois parâmetros: shape (k) e scale ($\theta$). Como nossa variável é o tempo até um determinado macho atingir amplexo, a distribuição Gammma é apropriada. É frequente que os GLMM Gamma sejam difícies de implementar, especialmente utilizando a função de ligação canônica <code>"inverse"</code> (Bolker at al 2022). Por esse motivo, alguns autores, como Lo e Andrews (2015) indicam utiliar a função de ligação <code>"log"</code>, a qual utilizaremos aqui.
 
 Os seguintes pacotes foram utilizados para as análises estatísticas e plotagem:
 ```{r message=FALSE, warning=FALSE}
-library(AICcmodavg)
-library(ggplot2)
-library(gridExtra)
-library(lme4)
-library(MASS)
-library(bbmle)
-library(interactions)
-library(tibble)
-library(tidyverse)
-library(broom)
-library(multcomp)
+library(AICcmodavg) # Model Selection and Multimodel Inference Based on (Q)AIC(c)
+library(ggplot2) # Create Elegant Data Visualisations Using the Grammar of Graphics
+library(gridExtra) # Miscellaneous Functions for "Grid" Graphics
+library(lme4) # Linear Mixed-Effects Models using 'Eigen' and S4
+library(MASS) # Support Functions and Datasets for Venables and Ripley's MASS
+library(bbmle) # Tools for General Maximum Likelihood Estimation
+library(interactions) # Comprehensive, User-Friendly Toolkit for Probing Interactions
+library(tibble) # Simple Data Frames
+library(tidyverse) # Easily Install and Load the 'Tidyverse'
+library(broom) # Convert Statistical Objects into Tidy Tibbles
+library(multcomp) # Simultaneous Inference in General Parametric Models
 ```
 
 ## Simulação com área fixa
@@ -206,8 +206,6 @@ AED(sim_Afix10, binw = 3)
 ```
 
 #### Seleção de modelos
-
-Optamos pelo uso de modelos generalizados mistos, pois pode haver um efeito aleatório de cada rio (a variação entre rios pode ser maior do que a variação dentro de um mesmo rio). Além disso, optamos por utilizar a distribuição Gama, pois estamos interessados no tempo até a fêmea escolher um macho e iniciar o amplexo.
 
 <details>
   <summary>Modelos com área fixa em 10</summary>
@@ -563,3 +561,4 @@ Ryan, M. J. (1988). Constraints and patterns in the evolution of anuran acoustic
 Schmid, E. (1978). Contribution to the morphology and histology of the vocal cords of Central European anurans (Amphibia). Zoologische Jahrbucher Anatomie, 5, 133-150.
 
 Wells, K. D. (1977). The social behaviour of anuran amphibians. Animal Behaviour, 25, 666-693.
+
