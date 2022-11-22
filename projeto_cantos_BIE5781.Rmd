@@ -6,7 +6,8 @@ output:
   html_document:
     toc: true
     toc_depth: 3
-    toc_float: true
+    toc_float:
+      collapsed: false
     number_sections: true
 editor_options: 
   chunk_output_type: console
@@ -195,17 +196,15 @@ library(broom) # Convert Statistical Objects into Tidy Tibbles
 library(multcomp) # Simultaneous Inference in General Parametric Models
 ```
 
-## Simulação com área fixa
+## Área fixa em 10
 
-### Área fixa em 10
-
-#### Análise exploratória
+### Análise exploratória
 
 ```{r fig.align = 'center'}
 AED(sim_Afix10, binw = 3)
 ```
 
-#### Seleção de modelos
+### Seleção de modelos
 
 <details>
   <summary>Modelos com área fixa em 10</summary>
@@ -265,12 +264,31 @@ model.names10 = c("glmm10.1", "glmm10.2", "glmm10.3", "glmm10.4", "glmm10.5", "g
 aictab(cand.set=models10, modnames=model.names10, refit=FALSE)
 ```
 
-#### Modelo mínimo adequado
-
+### Modelo mínimo adequado
+Neste cenário, os modelos 1 a 9 são igualmente plausíveis. Estes modelos tem em comum todas as três variáveis sem interação, e variam nas interações duplas e tripla que não possuem. A seguir, mostramos o sumário de todos esses modelos. O modelo 9, sem nenhuma interação, é apenas o terceiro da lista com um $\delta AIC$ de apenas 0,35.
+Pelo fato de as interações não parecem melhorar substancialmente o modelo e pela simplicidade, analisaremos apenas o modelo 9 em detalhe. 
+<details>
+<summary>Sumário dos modelos plausíveis</summary>
 ```{r}
 # Sumário do melhor modelo
 summary(glmm10.1)
+summary(glmm10.2)
+summary(glmm10.3)
+summary(glmm10.4)
+summary(glmm10.5)
+summary(glmm10.6)
+summary(glmm10.7)
+summary(glmm10.8)
+summary(glmm10.9)
+```
+</details>
 
+```{r}
+plot_tendencia(dados = sim_Afix10, modelo = glmm10.9)
+```
+
+
+```{r}
 # Intervalo de confiança dos coeficientes das preditoras
 conf10 = as.data.frame(confint(glmm10.1, method="Wald"))
 conf10 = conf10[-(1:3),]
@@ -284,19 +302,18 @@ ggplot(conf10, aes(x=coef, y=Predictor)) +
   geom_errorbar(aes(xmin=min25, xmax=max975), width=0.3)+
   xlab("\nIntervalos de confiança (95%)")+
   geom_vline(xintercept=0, colour="red")
-
 ```
 
 
-### Área fixa em 50
+## Área fixa em 50
 
-#### Análise exploratória
+### Análise exploratória
 
 ```{r fig.align= 'center'}
 AED(sim_Afix50, binw = 70)
 ```
 
-#### Seleção de modelos
+### Seleção de modelos
 
 <details>
 
@@ -357,7 +374,7 @@ model.names50 = gsub("10", "50", model.names10)
 aictab(cand.set=models50, modnames=model.names50)
 ```
 
-#### Modelo mínimo adequado
+### Modelo mínimo adequado
 
 ```{r}
 # Sumário do melhor modelo
@@ -367,16 +384,19 @@ summary(glmm50.1)
 # conf10.1 = confint(glmm10.1, method="Wald")
 ```
 
+```{r}
+plot_tendencia(dados = sim_Afix50, modelo = glmm50.1)
+```
 
-### Área fixa em 100
+## Área fixa em 100
 
-#### Análise exploratória
+### Análise exploratória
 
 ```{r}
 AED(sim_Afix100, binw = 200)
 ```
 
-#### Seleção de modelos
+### Seleção de modelos
 
 <details>
 
@@ -437,7 +457,7 @@ model.names100 = gsub("10", "100", model.names10)
 aictab(cand.set=models100, modnames=model.names100)
 ```
 
-#### Modelo mínimo adequado
+### Modelo mínimo adequado
 
 ```{r}
 # Sumário do melhor modelo
@@ -445,6 +465,10 @@ summary(glmm100.1)
 
 # Intervalo de confiança dos coeficientes das preditoras
 # conf10.1 = confint(glmm10.1, method="Wald")
+```
+
+```{r}
+plot_tendencia(dados = sim_Afix100, modelo = glmm100.1)
 ```
 
 ## Simulação com área variável
@@ -463,7 +487,8 @@ AED(sim_Avar, binw = 200)
 <details>
 
   <summary>Modelos com área variável</summary>
-```{r message=FALSE, warning=FALSE}
+```{r message=FALSE, warning=FALSE, eval=FALSE}
+
 # GLMM cheio com área
 glmmvar.1area = glmer(ttot~tamapad*freqpad*footpad*I(areapad^2) + (1|nsim), family=Gamma(link = "log"), data=sim_Avar)
 
@@ -517,7 +542,7 @@ glmmvar.15 = glmer(ttot~tamapad + (1|nsim), family=Gamma(link = "log"), data=sim
 ```
 </details>
 
-```{r}
+```{r eval = FALSE}
 # Seleção de modelo
 modelsvar = c(glmmvar.1, glmmvar.2, glmmvar.3, glmmvar.4, glmmvar.5, glmmvar.6, glmmvar.7, glmmvar.8, glmmvar.9, glmmvar.10, glmmvar.11, glmmvar.12, glmmvar.13, glmmvar.14, glmmvar.15)
 model.namesvar = gsub("10", "var", model.names10)
@@ -527,8 +552,13 @@ aictab(cand.set=modelsvar, modnames=model.namesvar)
 ### Modelo mínimo adequado
 
 ```{r}
-summary(glmmvar.1)
+#summary(glmmvar.1)
 ```
+
+```{r}
+#plot_tendencia(dados = sim_Avar, modelo = glmmvar.1)
+```
+
 
 # Discussão
 
