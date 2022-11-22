@@ -86,8 +86,17 @@ AED = function(dados, binw){
   grid.arrange(p1, p2, p3, p4, hist, nrow = 2)
 }
 
+
 #plots para linha de tendencia dos modelos
-linhatendencia = function(dados, pred){
+plot_tendencia = function(dados, modelo){
+  
+  coef = c(modelo@beta[1], modelo@beta[2], modelo@beta[3], modelo@beta[4])
+  names(coef) = c("inter", "tama", "freq", "foot")
+  ptama = dados$tamapad*coef["tama"] + coef["inter"]
+  pfreq = dados$freqpad*coef["freq"] + coef["inter"]
+  pfoot = dados$footpad*coef["foot"] + coef["inter"]
+  predlin = data.frame(ptama, pfreq, pfoot)
+  pred = exp(predlin)
   
   # 1. Scatter Plots
   
@@ -98,7 +107,7 @@ linhatendencia = function(dados, pred){
     scale_color_gradient(low = "darkseagreen1", high = "darkslategrey") +
     xlab("\nFrequência dominante (Hz)") +
     ylab("Tempo até início da cópula\n") +
-    geom_line(aes(y = pred), size = 1)
+    geom_line(aes(y = pred$pfreq), size = 1, color = "black", linetype="dashed")
   
   ## 1.2 Tempo ate amplexo vs SVL
   p2 = ggplot(dados, aes(tamapad, ttot, color=tamapad)) +
@@ -107,7 +116,7 @@ linhatendencia = function(dados, pred){
     scale_color_gradient(low = "darkseagreen1", high = "darkslategrey") +
     xlab("\nTamanho corporal (mm)") +
     ylab("Tempo até início da cópula\n") +
-    geom_line(aes(y = pred), size = 1)
+    geom_line(aes(y = pred$ptama), size = 1, color = "black", linetype="dashed")
   
   ## 1.3 Tempo ate amplexo vs taxa de foot-flagging
   p3 = ggplot(dados, aes(footpad, ttot, color=footpad)) +
@@ -116,6 +125,6 @@ linhatendencia = function(dados, pred){
     scale_color_gradient(low = "darkseagreen1", high = "darkslategrey") +
     xlab("\nTaxa de foot-flagging (n eventos/min)") +
     ylab("Tempo até início da cópula\n") +
-    geom_line(aes(y = pred), size = 1)
+    geom_line(aes(y = pred$pfoot), size = 1, color = "black", linetype="dashed")
   grid.arrange(p1, p2, p3, nrow = 1)
 }
