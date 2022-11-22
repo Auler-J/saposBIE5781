@@ -452,6 +452,10 @@ summary(glmm100.1)
 
 ### Análise exploratória
 ```{r}
+# Padroniza área
+sim_Avar$areapad = padroniza(sim_Avar$area)
+
+# AED
 AED(sim_Avar, binw = 200)
 ```
 
@@ -461,6 +465,12 @@ AED(sim_Avar, binw = 200)
 
   <summary>Modelos com área variável</summary>
 ```{r message=FALSE, warning=FALSE}
+# GLMM cheio com área
+glmmvar.1area = glmer(ttot~tamapad*freqpad*footpad*I(areapad^2) + (1|nsim), family=Gamma(link = "log"), data=sim_Avar)
+
+# GLMM apenas triplas
+glmmvar.2area = glmer(ttot~tamapad+freqpad+footpad+ I(area^2)+tamapad:freqpad+tamapad:footpad+freqpad:footpad+I(area^2):tamapad+I(area^2):freqpad+I(area^2):footpad+tamapad:freqpad:footpad+tamapad:freqpad:footpad:I(area^2) + (1|nsim), family)
+
 # 1. GLMM Cheio: efeito aleatório das cachoeiras sobre o intercepto + efeito fixo com tripla interação 
 glmmvar.1 = glmer(ttot~tamapad*freqpad*footpad + (1|nsim), family=Gamma(link = "log"), data=sim_Avar)
 
