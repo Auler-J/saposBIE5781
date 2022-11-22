@@ -1,7 +1,7 @@
 ---
 title: "Como sinais multimodais influenciam o tempo até o início do amplexo?"
 author: "Daniel YM Nakamura e Jennifer P Auler"
-date: '2022-11-08'
+date: '28 de novembro de 2022'
 output: 
   html_document:
     toc: true
@@ -13,6 +13,11 @@ editor_options:
   chunk_output_type: console
 ---
 
+<style>
+body {
+text-align: justify}
+</style>
+
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo = TRUE)
 ```
@@ -20,7 +25,7 @@ knitr::opts_chunk$set(echo = TRUE)
 # Introdução
 
 <center><img src="fig1.png" width="400"></center>
-<center>Figura 1: Ilustração de rã-de-corredeira (Hylodidae: Hylodes asper). Fonte: Paulo Presti.</center>
+<center>Figura 1: Ilustração de rã-de-corredeira (Hylodidae: *Hylodes asper*). Fonte: Paulo Presti.</center>
 
 \
 
@@ -179,7 +184,7 @@ summary(sim_Afix100) #arrumar dps pra rodar
 
 # Resultados
 Optamos pelo uso de modelos generalizados mistos, pois pode haver um efeito aleatório de cada rio (a variação entre rios pode ser maior do que a variação dentro de um mesmo rio). Além disso, optamos por utilizar a distribuição Gama, pois estamos interessados no tempo até a fêmea escolher um macho e iniciar o amplexo.
-A distribuição Gamma é uma gereralização da distribuição exponencial e é uma boa opção para modelar o tempo até N eventos ocorrerem. Esta distribuição possui dois parâmetros: shape (k) e scale ($\theta$). Como nossa variável é o tempo até um determinado macho atingir amplexo, a distribuição Gammma é apropriada. É frequente que os GLMM Gamma sejam difícies de implementar, especialmente utilizando a função de ligação canônica <code>"inverse"</code> (Bolker at al 2022). Por esse motivo, alguns autores, como Lo e Andrews (2015) indicam utiliar a função de ligação <code>"log"</code>, a qual utilizaremos aqui.
+A distribuição Gamma é uma gereralização da distribuição exponencial e é uma boa opção para modelar o tempo até N eventos ocorrerem. Esta distribuição possui dois parâmetros: shape ($k$) e scale ($\theta$). Como nossa variável é o tempo até um determinado macho atingir amplexo, a distribuição Gammma é apropriada. É frequente que os GLMM Gamma sejam difícies de implementar, especialmente utilizando a função de ligação canônica <code>"inverse"</code> (Bolker at al 2022). Por esse motivo, alguns autores, como Lo e Andrews (2015) indicam utiliar a função de ligação <code>"log"</code>, a qual utilizaremos aqui.
 
 Os seguintes pacotes foram utilizados para as análises estatísticas e plotagem:
 ```{r message=FALSE, warning=FALSE}
@@ -265,7 +270,7 @@ aictab(cand.set=models10, modnames=model.names10, refit=FALSE)
 ```
 
 ### Modelo mínimo adequado
-Neste cenário, os modelos 1 a 9 são igualmente plausíveis. Estes modelos tem em comum todas as três variáveis sem interação, e variam nas interações duplas e tripla que não possuem. A seguir, mostramos o sumário de todos esses modelos. O modelo 9, sem nenhuma interação, é apenas o terceiro da lista com um $\delta AIC$ de apenas 0,35.
+Neste cenário, os modelos 1 a 9 são igualmente plausíveis. Estes modelos tem em comum todas as três variáveis sem interação, e variam nas interações duplas e tripla que não possuem. A seguir, mostramos o sumário de todos esses modelos. O modelo 9, sem nenhuma interação, é apenas o terceiro da lista com um $\Delta AIC$ de apenas 0,35.
 Pelo fato de as interações não parecem melhorar substancialmente o modelo e pela simplicidade, analisaremos apenas o modelo 9 em detalhe. 
 <details>
 <summary>Sumário dos modelos plausíveis</summary>
