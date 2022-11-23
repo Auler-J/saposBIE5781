@@ -179,11 +179,14 @@ summary(sim_Afix100) #arrumar dps pra rodar
 
 # Resultados
 Optamos pelo uso de modelos generalizados mistos, pois pode haver um efeito aleatório de cada rio (a variação entre rios pode ser maior do que a variação dentro de um mesmo rio). Além disso, optamos por utilizar a distribuição Gama, pois estamos interessados no tempo até a fêmea escolher um macho e iniciar o amplexo.
-A distribuição Gamma é uma gereralização da distribuição exponencial e é uma boa opção para modelar o tempo até N eventos ocorrerem. Esta distribuição possui dois parâmetros: shape (k) e scale ($\theta$). Como nossa variável é o tempo até um determinado macho atingir amplexo, a distribuição Gammma é apropriada. É frequente que os GLMM Gamma sejam difícies de implementar, especialmente utilizando a função de ligação canônica <code>"inverse"</code> (Bolker at al 2022). Por esse motivo, alguns autores, como Lo e Andrews (2015) indicam utiliar a função de ligação <code>"log"</code>, a qual utilizaremos aqui.
+
+A distribuição Gamma é uma generalização da distribuição exponencial e é uma boa opção para modelar o tempo até N eventos ocorrerem. Esta distribuição possui dois parâmetros: shape (k) e scale ($\theta$). Como nossa variável é o tempo até um determinado macho atingir amplexo, a distribuição Gammma é apropriada. É frequente que os GLMM Gamma sejam difíceis de implementar, especialmente utilizando a função de ligação canônica <code>"inverse"</code> (Bolker at al 2022). Por esse motivo, alguns autores, como Lo e Andrews (2015) indicam utilizar a função de ligação <code>"log"</code>, a qual utilizaremos aqui.
 
 Os seguintes pacotes foram utilizados para as análises estatísticas e plotagem:
+
 ```{r message=FALSE, warning=FALSE}
 library(AICcmodavg) # Model Selection and Multimodel Inference Based on (Q)AIC(c)
+library(ggeffects)
 library(ggplot2) # Create Elegant Data Visualisations Using the Grammar of Graphics
 library(gridExtra) # Miscellaneous Functions for "Grid" Graphics
 library(lme4) # Linear Mixed-Effects Models using 'Eigen' and S4
@@ -257,8 +260,10 @@ glmm10.15 = glmer(ttot~tamapad + (1|nsim), family=Gamma(link = "log"), data=sim_
 ```
 </details>
 
+\
+
 ```{r}
-# Seleção do Modelo
+# Seleção de Modelos
 models10 = c(glmm10.1, glmm10.2, glmm10.3, glmm10.4, glmm10.5, glmm10.6, glmm10.7, glmm10.8, glmm10.9, glmm10.10, glmm10.11, glmm10.12, glmm10.13, glmm10.14, glmm10.15)
 model.names10 = c("glmm10.1", "glmm10.2", "glmm10.3", "glmm10.4", "glmm10.5", "glmm10.6", "glmm10.7", "glmm10.8", "glmm10.9", "glmm10.10", "glmm10.11", "glmm10.12", "glmm10.13", "glmm10.14", "glmm10.15")
 aictab(cand.set=models10, modnames=model.names10, refit=FALSE)
@@ -267,6 +272,9 @@ aictab(cand.set=models10, modnames=model.names10, refit=FALSE)
 ### Modelo mínimo adequado
 Neste cenário, os modelos 1 a 9 são igualmente plausíveis. Estes modelos tem em comum todas as três variáveis sem interação, e variam nas interações duplas e tripla que não possuem. A seguir, mostramos o sumário de todos esses modelos. O modelo 9, sem nenhuma interação, é apenas o terceiro da lista com um $\delta AIC$ de apenas 0,35.
 Pelo fato de as interações não parecem melhorar substancialmente o modelo e pela simplicidade, analisaremos apenas o modelo 9 em detalhe. 
+
+\
+
 <details>
 <summary>Sumário dos modelos plausíveis</summary>
 ```{r}
@@ -284,26 +292,14 @@ summary(glmm10.9)
 </details>
 
 ```{r}
-plot_tendencia(dados = sim_Afix10, modelo = glmm10.9)
+# Plota 95% CI
+plotConf(glmm10.4)
 ```
-
 
 ```{r}
-# Intervalo de confiança dos coeficientes das preditoras
-conf10 = as.data.frame(confint(glmm10.1, method="Wald"))
-conf10 = conf10[-(1:3),]
-conf10$coef = glmm10.1@beta[-1]
-conf10 = tibble::rownames_to_column(conf10, "Predictor")
-colnames(conf10)[c(2,3)] = c("min25", "max975")
-conf10
-
-ggplot(conf10, aes(x=coef, y=Predictor)) +
-  geom_point() +
-  geom_errorbar(aes(xmin=min25, xmax=max975), width=0.3)+
-  xlab("\nIntervalos de confiança (95%)")+
-  geom_vline(xintercept=0, colour="red")
+# Plota linhas de tendência
+plot_tendencia(dados = sim_Afix10, modelo = glmm10.4)
 ```
-
 
 ## Área fixa em 50
 
@@ -380,11 +376,12 @@ aictab(cand.set=models50, modnames=model.names50)
 # Sumário do melhor modelo
 summary(glmm50.1)
 
-# Intervalo de confiança dos coeficientes das preditoras
-# conf10.1 = confint(glmm10.1, method="Wald")
+# Plot 95% CI
+plotConf(glmm50.1)
 ```
 
 ```{r}
+# Plot da curva de tendência
 plot_tendencia(dados = sim_Afix50, modelo = glmm50.1)
 ```
 
@@ -461,14 +458,15 @@ aictab(cand.set=models100, modnames=model.names100)
 
 ```{r}
 # Sumário do melhor modelo
-summary(glmm100.1)
+summary(glmm100.2)
 
-# Intervalo de confiança dos coeficientes das preditoras
-# conf10.1 = confint(glmm10.1, method="Wald")
+# Plot 95% CI
+plotConf(glmm100.2)
 ```
 
 ```{r}
-plot_tendencia(dados = sim_Afix100, modelo = glmm100.1)
+# Plot da curva de tendência
+plot_tendencia(dados = sim_Afix100, modelo = glmm100.2)
 ```
 
 ## Simulação com área variável
@@ -488,12 +486,6 @@ AED(sim_Avar, binw = 200)
 
   <summary>Modelos com área variável</summary>
 ```{r message=FALSE, warning=FALSE, eval=FALSE}
-
-# GLMM cheio com área
-glmmvar.1area = glmer(ttot~tamapad*freqpad*footpad*I(areapad^2) + (1|nsim), family=Gamma(link = "log"), data=sim_Avar)
-
-# GLMM apenas triplas
-glmmvar.2area = glmer(ttot~tamapad+freqpad+footpad+ I(area^2)+tamapad:freqpad+tamapad:footpad+freqpad:footpad+I(area^2):tamapad+I(area^2):freqpad+I(area^2):footpad+tamapad:freqpad:footpad+tamapad:freqpad:footpad:I(area^2) + (1|nsim), family)
 
 # 1. GLMM Cheio: efeito aleatório das cachoeiras sobre o intercepto + efeito fixo com tripla interação 
 glmmvar.1 = glmer(ttot~tamapad*freqpad*footpad + (1|nsim), family=Gamma(link = "log"), data=sim_Avar)

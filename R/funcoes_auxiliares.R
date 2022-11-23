@@ -83,7 +83,7 @@ AED = function(dados, binw){
     ylab("Número de machos\n") +
     theme_minimal()
   
-  grid.arrange(p1, p2, p3, p4, hist, nrow = 2)
+  grid.arrange(arrangeGrob(p1, p2, p3, p4, ncol=2, nrow=2), arrangeGrob(hist, ncol=1, nrow=1))
 }
 
 
@@ -127,4 +127,21 @@ plot_tendencia = function(dados, modelo){
     ylab("Tempo até início da cópula\n") +
     geom_line(aes(y = pred$pfoot), size = 1, color = "black", linetype="dashed")
   grid.arrange(p1, p2, p3, nrow = 1)
+}
+
+#plot for 95% confidence interval
+plotConf = function(model){
+  # Dataframe with 95% confidence intervals
+  conf = as.data.frame(confint(model, method="Wald"))
+  conf = conf[-(1:3),]
+  conf$coef = model@beta[-1]
+  conf = tibble::rownames_to_column(conf, "Predictor")
+  colnames(conf)[c(2,3)] = c("min25", "max975")
+  
+  # ggplot
+  ggplot(conf, aes(x=coef, y=Predictor)) +
+  geom_point() +
+  geom_errorbar(aes(xmin=min25, xmax=max975), width=0.01)+
+  xlab("\nIntervalos de confiança (95%)")+
+  geom_vline(xintercept=0, colour="red")
 }
