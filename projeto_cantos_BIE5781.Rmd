@@ -185,23 +185,23 @@ summary(sim_Afix100) #arrumar dps pra rodar
 # Resultados
 Optamos pelo uso de modelos generalizados mistos, pois pode haver um efeito aleatório de cada rio (a variação entre rios pode ser maior do que a variação dentro de um mesmo rio). Além disso, optamos por utilizar a distribuição Gama, pois estamos interessados no tempo até a fêmea escolher um macho e iniciar o amplexo.
 
-A distribuição Gamma é uma generalização da distribuição exponencial e é uma boa opção para modelar o tempo até N eventos ocorrerem. Esta distribuição possui dois parâmetros: shape (k) e scale ($\theta$). Como nossa variável é o tempo até um determinado macho atingir amplexo, a distribuição Gammma é apropriada. É frequente que os GLMM Gamma sejam difíceis de implementar, especialmente utilizando a função de ligação canônica <code>"inverse"</code> (Bolker at al 2022). Por esse motivo, alguns autores, como Lo e Andrews (2015) indicam utilizar a função de ligação <code>"log"</code>, a qual utilizaremos aqui.
+A distribuição Gamma é uma generalização da distribuição exponencial e é uma boa opção para modelar o tempo até N eventos ocorrerem. Esta distribuição possui dois parâmetros: shape ($k$) e scale ($\theta$). Como nossa variável é o tempo até um determinado macho atingir amplexo, a distribuição Gammma é apropriada. É frequente que os GLMM Gamma sejam difíceis de implementar, especialmente utilizando a função de ligação canônica <code>"inverse"</code> (Bolker at al 2022). Por esse motivo, alguns autores, como Lo e Andrews (2015) indicam utilizar a função de ligação <code>"log"</code>, a qual utilizaremos aqui.
 
 Os seguintes pacotes foram utilizados para as análises estatísticas e plotagem:
 
 ```{r message=FALSE, warning=FALSE}
-library(AICcmodavg) # Model Selection and Multimodel Inference Based on (Q)AIC(c)
-library(ggeffects)
-library(ggplot2) # Create Elegant Data Visualisations Using the Grammar of Graphics
-library(gridExtra) # Miscellaneous Functions for "Grid" Graphics
 library(lme4) # Linear Mixed-Effects Models using 'Eigen' and S4
 library(MASS) # Support Functions and Datasets for Venables and Ripley's MASS
 library(bbmle) # Tools for General Maximum Likelihood Estimation
 library(interactions) # Comprehensive, User-Friendly Toolkit for Probing Interactions
+library(multcomp) # Simultaneous Inference in General Parametric Models
 library(tibble) # Simple Data Frames
 library(tidyverse) # Easily Install and Load the 'Tidyverse'
 library(broom) # Convert Statistical Objects into Tidy Tibbles
-library(multcomp) # Simultaneous Inference in General Parametric Models
+library(AICcmodavg) # Model Selection and Multimodel Inference Based on (Q)AIC(c)
+library(ggplot2) # Create Elegant Data Visualisations Using the Grammar of Graphics
+library(ggeffects) # Create Tidy Data Frames of Marginal Effects for 'ggplot' from Model Outputs
+library(gridExtra) # Miscellaneous Functions for "Grid" Graphics
 ```
 
 ## Área fixa em 10
@@ -274,10 +274,8 @@ model.names10 = c("glmm10.1", "glmm10.2", "glmm10.3", "glmm10.4", "glmm10.5", "g
 aictab(cand.set=models10, modnames=model.names10, refit=FALSE)
 ```
 
-### Modelo mínimo adequado
-Neste cenário, os modelos 1 a 9 são igualmente plausíveis. Estes modelos tem em comum todas as três variáveis sem interação, e variam nas interações duplas e tripla que não possuem. A seguir, mostramos o sumário de todos esses modelos. O modelo 9, sem nenhuma interação, é apenas o terceiro da lista com um $\Delta AIC$ de apenas 0,35.
-Pelo fato de as interações não parecem melhorar substancialmente o modelo e pela simplicidade, analisaremos apenas o modelo 9 em detalhe. 
-
+### Modelos plausíveis
+Neste cenário, os modelos 1, 2 e 4 são igualmente plausíveis, uma vez que $\Delta AIC < 2$. Estes modelos tem em comum todas as três variáveis sem interação, e variam nas interações duplas e tripla que não possuem. A seguir, mostramos o sumário de todos esses modelos. Dentre todos os modelos, o tem menor valor de AIC e por esse motivo, concentraremos a análise neste. 
 \
 
 <details>
@@ -286,13 +284,7 @@ Pelo fato de as interações não parecem melhorar substancialmente o modelo e p
 # Sumário do melhor modelo
 summary(glmm10.1)
 summary(glmm10.2)
-summary(glmm10.3)
 summary(glmm10.4)
-summary(glmm10.5)
-summary(glmm10.6)
-summary(glmm10.7)
-summary(glmm10.8)
-summary(glmm10.9)
 ```
 </details>
 
@@ -459,7 +451,9 @@ model.names100 = gsub("10", "100", model.names10)
 aictab(cand.set=models100, modnames=model.names100)
 ```
 
-### Modelo mínimo adequado
+### Modelos plausíveis
+
+Os modelos 1 e 2 são igualmente plausíveis pois $\Delta AIC < 2$. O modelo 1 inclui todas as preditoras <code>tamapad</code>, <code>footpad</code>, <code>freqpad</code> e suas interações duplas e tripla. O modelo 2, por sua vez, não possui a interação tripla. Por ter menor AIC, apresentamos o modelo 2 em detalhes:
 
 ```{r}
 # Sumário do melhor modelo
@@ -487,10 +481,22 @@ AED(sim_Avar, binw = 200)
 
 ### Seleção de modelos
 
+Nos modelos com área variável, seria possível incluir a area também como variável preditora. Optamos por não fazer isso por dois motivos: (1) O efeito da variação da área de certa forma já está incluído na variável aleatória <code>nsim</code>. (2) O modelo mais complexo com as 4 preditoras e suas interações não converge.
+
+```{r eval = FALSE}
+sim_Avar$areapad = padroniza(sim_Avar$area)
+glmmvar.full = glmer(ttot~tamapad*freqpad*footpad*areapad + (1|nsim), family=Gamma(link = "log"), data=sim_Avar)
+
+# Warning message:
+# In checkConv(attr(opt, "derivs"), opt$par, ctrl = control$checkConv,  :
+#   Model failed to converge with max|grad| = 0.165652 (tol = 0.002, component 1)
+```
+
+
 <details>
 
   <summary>Modelos com área variável</summary>
-```{r message=FALSE, warning=FALSE, eval=FALSE}
+```{r message=FALSE, warning=FALSE}
 
 # 1. GLMM Cheio: efeito aleatório das cachoeiras sobre o intercepto + efeito fixo com tripla interação 
 glmmvar.1 = glmer(ttot~tamapad*freqpad*footpad + (1|nsim), family=Gamma(link = "log"), data=sim_Avar)
@@ -539,21 +545,27 @@ glmmvar.15 = glmer(ttot~tamapad + (1|nsim), family=Gamma(link = "log"), data=sim
 ```
 </details>
 
-```{r eval = FALSE}
+```{r}
 # Seleção de modelo
 modelsvar = c(glmmvar.1, glmmvar.2, glmmvar.3, glmmvar.4, glmmvar.5, glmmvar.6, glmmvar.7, glmmvar.8, glmmvar.9, glmmvar.10, glmmvar.11, glmmvar.12, glmmvar.13, glmmvar.14, glmmvar.15)
 model.namesvar = gsub("10", "var", model.names10)
 aictab(cand.set=modelsvar, modnames=model.namesvar)
 ```
 
-### Modelo mínimo adequado
+### Modelos plausíveis
+
+Os modelos 1 e 2 são igualmente plausíveis pois $\Delta AIC < 2$. O modelo 1 inclui todas as preditoras <code>tamapad</code>, <code>footpad</code>, <code>freqpad</code> e suas interações duplas e tripla. O modelo 2, por sua vez, não possui a interação tripla. Por ter menor AIC, apresentamos o modelo 2 em detalhes:
 
 ```{r}
-#summary(glmmvar.1)
+# Sumario do melhor modelo
+summary(glmmvar.2)
+
+# Plot 95% CI
+plotConf(glmmvar.2)
 ```
 
 ```{r}
-#plot_tendencia(dados = sim_Avar, modelo = glmmvar.1)
+plot_tendencia(dados = sim_Avar, modelo = glmmvar.2)
 ```
 
 
@@ -588,4 +600,5 @@ Ryan, M. J. (1988). Constraints and patterns in the evolution of anuran acoustic
 Schmid, E. (1978). Contribution to the morphology and histology of the vocal cords of Central European anurans (Amphibia). Zoologische Jahrbucher Anatomie, 5, 133-150.
 
 Wells, K. D. (1977). The social behaviour of anuran amphibians. Animal Behaviour, 25, 666-693.
+
 

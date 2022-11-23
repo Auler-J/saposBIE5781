@@ -105,7 +105,7 @@ plot_tendencia = function(dados, modelo){
     geom_point(shape=16, size=.05, show.legend=F, alpha = .5) +
     theme_minimal() +
     scale_color_gradient(low = "darkseagreen1", high = "darkslategrey") +
-    xlab("\nFrequência dominante (Hz)") +
+    xlab("\nFrequência dominante (Hz)\n(padronizada)") +
     ylab("Tempo até início da cópula\n") +
     geom_line(aes(y = pred$pfreq), size = 1, color = "black", linetype="dashed")
   
@@ -114,7 +114,7 @@ plot_tendencia = function(dados, modelo){
     geom_point(shape=16, size=.05, show.legend=F, alpha = .5) +
     theme_minimal() +
     scale_color_gradient(low = "darkseagreen1", high = "darkslategrey") +
-    xlab("\nTamanho corporal (mm)") +
+    xlab("\nTamanho corporal (mm)\n(padronizado)") +
     ylab("Tempo até início da cópula\n") +
     geom_line(aes(y = pred$ptama), size = 1, color = "black", linetype="dashed")
   
@@ -123,7 +123,7 @@ plot_tendencia = function(dados, modelo){
     geom_point(shape=16, size=.2, show.legend=F, alpha = .5) +
     theme_minimal() +
     scale_color_gradient(low = "darkseagreen1", high = "darkslategrey") +
-    xlab("\nTaxa de foot-flagging (n eventos/min)") +
+    xlab("\nTaxa de foot-flagging\n(n eventos/min) (padronizada)") +
     ylab("Tempo até início da cópula\n") +
     geom_line(aes(y = pred$pfoot), size = 1, color = "black", linetype="dashed")
   grid.arrange(p1, p2, p3, nrow = 1)
