@@ -571,6 +571,48 @@ plot_tendencia(dados = sim_Avar, modelo = glmmvar.2)
 
 # Discussão
 
+```{r}
+library(DT)
+```
+
+
+```{r}
+#extrai coeficientes dos modelos plausiveis de cada area
+cfsimulacao = c(0.5, -1.05, 0.8, rep(NA, 5))
+cfglmm10.4 = c(summary(glmm10.4)$coefficients[,1], NA, NA)
+cfglmm10.2 = c(summary(glmm10.2)$coefficients[,1], NA)
+cfglmm10.1 = summary(glmm10.1)$coefficients[,1]
+cfglmm50.1 = summary(glmm50.1)$coefficients[,1]
+cfglmm100.2 = c(summary(glmm100.2)$coefficients[,1], NA)
+cfglmm100.1 = summary(glmm100.1)$coefficients[,1]
+cfglmmvar.2 = c(summary(glmmvar.2)$coefficients[,1], NA)
+cfglmmvar.1 = summary(glmmvar.1)$coefficients[,1]
+
+#como ha modelos sem alguns coeficientes, preciso adicionar eles como NA no vetor para fazer uma tabela
+colnames = attributes(summary(glmm10.1)$coefficients)$dimnames[[1]]
+names(cfglmm10.4)[c(7,8)] = c(colnames[!colnames %in% names(cfglmm10.4)])
+names(cfglmm10.2)[8] = "tamapad:freqpad:footpad"
+names(cfglmm100.2)[8] = "tamapad:freqpad:footpad"
+names(cfglmmvar.2)[8] = "tamapad:freqpad:footpad"
+
+#e ordenar para ficar igual aos outros
+cfglmm10.4 = cfglmm10.4[colnames]
+
+#fazer tabela e mudar nomes
+cftab = data.frame(cfsimulacao, cfglmm10.4, cfglmm10.2, cfglmm10.1, cfglmm50.1, cfglmm100.2, cfglmm100.1, cfglmmvar.2, cfglmmvar.1)
+names(cftab) = gsub(pattern = "cfglm", replacement = "", x = names(cftab))
+names(cftab)[1] = "sim"
+rownames(cftab) = gsub(pattern = "pad", replacement = "", x = rownames(cftab))
+cftab = t(cftab)
+                      
+#voltando coeficientes pra escala dos dados
+cftab[-1,] = exp(cftab[-1,])
+cftab = round(cftab, 2)
+
+datatable(cftab)
+```
+
+
 # Referências
 
 Bolker at al 2022. GLMM FAQ <https://bbolker.github.io/mixedmodels-misc/glmmFAQ.html#reml-for-glmms>.
