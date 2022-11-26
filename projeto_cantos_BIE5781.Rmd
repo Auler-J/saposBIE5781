@@ -571,20 +571,33 @@ plot_tendencia(dados = sim_Avar, modelo = glmmvar.2)
 
 # Discussão
 
-```{r}
-library(DT)
+Pacotes utilizados
+```{r message=FALSE, warning=FALSE}
+library(DT) # A Wrapper of the JavaScript Library 'DataTables'
 ```
 
+## Comparação de coeficientes
 
-```{r}
+Para comparar os modelos plausíveis com as simulações, apresentamos na tabela abaixo os coeficientes colocados nas simulações e os encontrados pelos modelos. Em cinza escuro estão as linhas de input da simulação e abaixo delas nos modelos plausíveis para cada variação na área. Os modelos plausíveis são apresentados em ordem de $\Delta AIC$ crescente.
+
+<center>Tabela 1 - Coeficientes utilizados em cada simulação (cinza escuro) e obtidos pelos modelos ajustados (branco)</center>
+\
+
+```{r echo=FALSE}
 #extrai coeficientes dos modelos plausiveis de cada area
-cfsimulacao = c(0.5, -1.05, 0.8, rep(NA, 5))
+sim10 = c(cfsim_Afix10, rep(NA, times = 4))
 cfglmm10.4 = c(summary(glmm10.4)$coefficients[,1], NA, NA)
 cfglmm10.2 = c(summary(glmm10.2)$coefficients[,1], NA)
 cfglmm10.1 = summary(glmm10.1)$coefficients[,1]
+
+sim50 = c(cfsim_Afix50, rep(NA, times = 4))
 cfglmm50.1 = summary(glmm50.1)$coefficients[,1]
+
+sim100 = c(cfsim_Afix100, rep(NA, times = 4))
 cfglmm100.2 = c(summary(glmm100.2)$coefficients[,1], NA)
 cfglmm100.1 = summary(glmm100.1)$coefficients[,1]
+
+simvar = c(cfsim_Avar, rep(NA, times = 4))
 cfglmmvar.2 = c(summary(glmmvar.2)$coefficients[,1], NA)
 cfglmmvar.1 = summary(glmmvar.1)$coefficients[,1]
 
@@ -599,17 +612,32 @@ names(cfglmmvar.2)[8] = "tamapad:freqpad:footpad"
 cfglmm10.4 = cfglmm10.4[colnames]
 
 #fazer tabela e mudar nomes
-cftab = data.frame(cfsimulacao, cfglmm10.4, cfglmm10.2, cfglmm10.1, cfglmm50.1, cfglmm100.2, cfglmm100.1, cfglmmvar.2, cfglmmvar.1)
-names(cftab) = gsub(pattern = "cfglm", replacement = "", x = names(cftab))
-names(cftab)[1] = "sim"
+cftab = data.frame(sim10, cfglmm10.4, cfglmm10.2, cfglmm10.1, sim50, cfglmm50.1, sim100, cfglmm100.2, cfglmm100.1, simvar, cfglmmvar.2, cfglmmvar.1)
+names(cftab) = gsub(pattern = "cf", replacement = "", x = names(cftab))
+names(cftab) = gsub(pattern = "sim", replacement = "sim_Afix", x = names(cftab))
+names(cftab)[10] = "sim_Avar"
 rownames(cftab) = gsub(pattern = "pad", replacement = "", x = rownames(cftab))
+
 cftab = t(cftab)
-                      
-#voltando coeficientes pra escala dos dados
-cftab[-1,] = exp(cftab[-1,])
 cftab = round(cftab, 2)
 
-datatable(cftab)
+# tabela com formatacao bonita
+datatable(cftab, options = list(paging = FALSE)) %>%
+formatStyle("(Intercept)",
+  target = 'row',
+  fontWeight = styleEqual(c(0, 1), c('bold', '')),
+  backgroundColor = styleEqual(c(0, 1), c(rgb(0.8, 0.8, 0.8, 0.5), 'white')))
+```
+
+Apesar de o intercepto de todos as simulações ser $0$, observamos que todos os modelos ajustados possuem valores de intercepto positivos, e que este valor aumenta conforme o aumento da área. Quanto aos coeficientes de tamanho, e de frequência, os coeficientes ajustados possuem mesmo sinal (negativo e positivo, respectivamente) que os simulados, porém com magnitude menor do que a esperada. O coeficiente da taxa de *footflag*, por sua vez, tem magnitude menor do que a esperada e sinal contrário ao simulado. É possível notar também que, apesar da variação em área, o valor dos coeficientes entre simulações é bastante parecido, o que é compatível com o simulado.
+Quanto aos coeficientes de interação, todos tem magnitude de efeito pequena, o que é condizente com a simulação pois estes efeitos não foram incluídos. Mesmo assim, o ajuste de modelos demonstra que as interações duplas são essenciais para entender os modelos, e as interações triplas podem ou não melhorar o ajuste do modelo. Este fato pode ser explicado pois todas as características são correlacionadas com a distância do macho até a cachoeira, e portanto as características podem ser correlacionadas entre si. 
+
+## Limitações dos modelos
+
+Como já dito, o ajuste dos modelos com a função de ligação canônica foi possível, uma vez que nos modelos mais complexos resultava em erro. Por isso, optamos pela função de ligação log. Essa opção pode ter gerado algumas das diferenças observadas entre a simulação e os previstos pelo modelo. Como exemplo desta diferença, mostramos novamente as curvas previstas para o modelo de área 100. A função de ligação log permite o formato da curva apenas crescente, no entanto a função de ligação logística permitiria o formato de "S" mais adequado aos dados.
+
+```{r}
+plot_tendencia(dados = sim_Afix100, modelo = glmm100.2)
 ```
 
 
@@ -642,5 +670,6 @@ Ryan, M. J. (1988). Constraints and patterns in the evolution of anuran acoustic
 Schmid, E. (1978). Contribution to the morphology and histology of the vocal cords of Central European anurans (Amphibia). Zoologische Jahrbucher Anatomie, 5, 133-150.
 
 Wells, K. D. (1977). The social behaviour of anuran amphibians. Animal Behaviour, 25, 666-693.
+
 
 
