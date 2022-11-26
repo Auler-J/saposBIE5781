@@ -77,7 +77,7 @@ saposim = function(nsim = 1000, vecarea = round(runif(nsim, 10, 100), 0), vecnma
     dados$exprlin = dados$exprlin - mean(dados$exprlin)
     #equacao logistica
     dados$prob = exp(dados$exprlin)/ (1+exp(dados$exprlin))
-    dados$prob
+    
     
     #vetores para salvar machos indisponives e os ainda disponives
     mdisp = dados$machoid
@@ -137,5 +137,10 @@ saposim = function(nsim = 1000, vecarea = round(runif(nsim, 10, 100), 0), vecnma
   result = result[-1,] #retira linha NA
   result$femeasim = paste(result$femea, result$nsim, sep = "_")
   row.names(result) = 1:length(result$area)
-  return(result)
+  
+  param = c(-mean(dados$exprlin), cffreq, cffoot, cftama)
+  names(param) = c("(Intercept)", "tama", "freq", "foot")
+  ret = list(param = param, sim = result)
+  return(ret)
 }
+saposim(nsim= 10)
