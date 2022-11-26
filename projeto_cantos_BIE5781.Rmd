@@ -579,10 +579,9 @@ library(DT) # A Wrapper of the JavaScript Library 'DataTables'
 ## Comparação de coeficientes
 
 Para comparar os modelos plausíveis com as simulações, apresentamos na tabela abaixo os coeficientes colocados nas simulações e os encontrados pelos modelos. Em cinza escuro estão as linhas de input da simulação e abaixo delas nos modelos plausíveis para cada variação na área. Os modelos plausíveis são apresentados em ordem de $\Delta AIC$ crescente.
-
-<center>Tabela 1 - Coeficientes utilizados em cada simulação (cinza escuro) e obtidos pelos modelos ajustados (branco)</center>
 \
-
+\
+<center>Tabela 1 - Coeficientes utilizados em cada simulação (cinza escuro) e obtidos pelos modelos ajustados (branco)</center>
 ```{r echo=FALSE}
 #extrai coeficientes dos modelos plausiveis de cada area
 sim10 = c(cfsim_Afix10, rep(NA, times = 4))
