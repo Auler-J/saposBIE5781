@@ -56,6 +56,8 @@ O objetivo geral desse trabalho é responder como sinais multi-modais influencia
 
 # Simulação de dados
 
+## Parâmetros biológicos
+
 Embora dados das nossas variáveis preditoras sejam mais acessíveis na literatura, dados da nossa variável resposta (tempo de espera da fêmea até início da cópula) são escassos. Isso ocorre pois é extremamente custoso ao biólogo de campo tentar localizar uma fêmea de anuro próxima dos machos já que elas não cantam e raramente são vistas na natureza. Portanto, optamos pelo uso de dados simulados.
 
 As nossas variáveis preditoras teóricas são frequência do canto, tamanho corporal e *display* de *foot-flagging*. Contudo, precisamos operacionalizar essas variáveis. Utilizamos as seguintes variáveis preditoras operacionais:
@@ -66,23 +68,25 @@ As nossas variáveis preditoras teóricas são frequência do canto, tamanho cor
 
 - Taxa de *foot-flagging* (medida em número de eventos/minuto). 
 
-Para *Hylodes asper*, Haddad & Giaretta (1999) reportaram que a DF se encontra no terceiro harmônico entre 5000 a 6500 Hz, com valor de *midpoint* ([máx - min] / 2) igual a 5750 Hz. Heyer et al. (1990) reportaram que os machos apresentam um SVL médio de 40.5 mm (39.4-42.3 mm). Já a taxa de *foot-flagging* não foi reportada por unidade de tempo em nenhum destes trabalhos, mas é possível estimar através de vídeos disponíveis no YouTube (~10 a cada 5 min). Utilizamos estes valores como referência das características dos machos simulados na função 'saposim'.
+Para *Hylodes asper*, Haddad & Giaretta (1999) reportaram que a DF se encontra no terceiro harmônico entre 5000 a 6500 Hz, com valor de *midpoint* ([máx - min] / 2) igual a 5750 Hz. Heyer et al. (1990) reportaram que os machos apresentam um SVL médio de 40.5 mm (39.4-42.3 mm). Já a taxa de *foot-flagging* não foi reportada por unidade de tempo em nenhum destes trabalhos, mas é possível estimar através de vídeos disponíveis no YouTube (~10 a cada 5 min). Utilizamos estes valores como referência das características dos machos simulados na função 'saposim', disponível no arquivo "R/saposim.R". Além disso, diversas funções acessórias utilizadas neste arquivo para plotagem dos dados e também utilizadas nas simulações estão no arquivo "R/funcoes_auxiliares.R".
 
 ```{r ass.function}
 source("R/funcoes_auxiliares.R")
-source("R/saposim.R")
 ```
 
-A cada simução é criada uma nova matriz de <code>espaco</code> de <code>area</code> linhas e <code>area</code> colunas. Em seguida, são sorteadas as posições dos <code>nmacho</code> daquela simulação. A frequência dominante do canto <code>freq</code> (DF: Hz), taxa de *foot-flagging* <code>foot</code> (número de eventos de *foot-flagging*/minuto) e tamanho corporal <code>tama</code> (SVL: mm) de cada um dos machos é simulada. Estas caracteristicas são sorteadas a partir de uma distribuição  (normal, poisson e normal para DF, taxa de *foot-flagging* e SVL, respectivamente) e, em seguida, padronizadas pela função <code>padroniza</code>. Os valores padronizados aparecem no output como <code>freqpad</code>, <code>footpad</code> e <code>tamapad</code>. É esperado que machos mais próximos à cachoeira tenham menor tamanho corporal (SVL menor) e vocalizem em frequencias mais agudas (DF maior) e portanto tenham, em média, probabilidade menor de atrair fêmeas. No entanto, é esperado que esses machos tenham também maior taxa de *foot-flagging*, o que pode contra-balancear essa esperança. Apesar de estes valores serem correlacionados, as características do macho são sorteadas independentemente de uma distribuição aleatória.
+## Descrição da simulação
 
-Todos os machos ficam parados, sem mudarem os sítios reprodutivos, pois eles são altamente territoriais. Portanto, apenas a fêmea se locomove.
+A cada simução é criada uma nova matriz de <code>espaco</code> de <code>area</code> linhas e <code>area</code> colunas. Em seguida, são sorteadas as posições que os <code>nmacho</code> ocuparão durante aquela simulação. Os machos de *Hylodes asper* são altamente territoriais e ficam parados, sem mudarem os sítios reprodutivos. Portanto, em nossa simulação, apenas a fêmea se locomove.
+
+Em seguida, os parâmetros da simulação são simulados: frequência dominante do canto <code>freq</code> (DF: Hz), taxa de *foot-flagging* <code>foot</code> (número de eventos de *foot-flagging*/minuto) e tamanho corporal <code>tama</code> (SVL: mm) de cada um dos machos. Estas caracteristicas são sorteadas a partir de uma distribuição  (normal, poisson e normal para DF, taxa de *foot-flagging* e SVL, respectivamente) e, em seguida, padronizadas pela função <code>padroniza</code>. Os valores padronizados aparecem no output como <code>freqpad</code>, <code>footpad</code> e <code>tamapad</code>. É esperado que machos mais próximos à cachoeira tenham menor tamanho corporal (SVL menor) e vocalizem em frequencias mais agudas (DF maior) e portanto tenham, em média, probabilidade menor de atrair fêmeas. No entanto, é esperado que esses machos tenham também maior taxa de *foot-flagging*, o que pode contra-balancear essa esperança. Apesar de estes valores serem correlacionados, as características do macho são sorteadas independentemente de uma distribuição aleatória.
 
 A probabilidade de seleção do macho é então calculada através de uma regressão logistica, 
-$$P = \frac{e^{exprlin}}{1+e^{exprlin}}$$ 
-com expressão linear de fórmula: $exprlin = a \times tamanho + b \times taxafootflag + c \times DF$ e intercepto igual à média da expressão linear.
+$$prob = \frac{e^{exprlin}}{1+e^{exprlin}}$$ 
+com expressão linear de fórmula: $exprlin = a \times tamanho + b \times taxafootflag + c \times DF$ e intercepto igual à média da expressão linear que, no caso de dados padrozinados é $0$.
 
-Uma cédula vazia é então sorteada para a fêmea ocupar, e esta escolhe um macho para copular com probabilidade <code>prob</code>. A distância <code>distf</code> entre a fêmea e o macho escolhido é calculada pela função <code>dist</code>. A fêmea e o macho são considerados ocupados até o final da simulação e são retirados do <code>espaco</code>. A simulação se repete com <code>nfemea = nmacho</code>. O tempo total <code>ttot</code> para o macho ser escolhido também é guardado, sendo definido como a soma de todas <code>distf</code> anteriores na mesma simulação. A função de simulação de sapos, <code>saposim</code> se encontra na íntegra no arquivo "R/saposim.R".
-
+Por fim, uma cédula vazia é sorteada para a fêmea ocupar, e esta escolhe um macho para copular com probabilidade <code>prob</code>. A distância <code>distf</code> entre a fêmea e o macho escolhido é calculada pela função <code>dist</code>. A fêmea e o macho são considerados ocupados até o final da simulação e são retirados do <code>espaco</code>. A simulação se repete com <code>nfemea = nmacho</code>. O tempo total <code>ttot</code> para o macho ser escolhido também é guardado, sendo definido como a soma de todas <code>distf</code> anteriores na mesma simulação. A função de simulação de sapos, <code>saposim</code> se encontra na íntegra no arquivo "R/saposim.R".
+\
+\
 ```{r figura, echo=FALSE, fig.align = 'center'}
 par(mar = c(0,0,1,0))
 
@@ -115,7 +119,7 @@ text(x = 4.15, y = 2.5, "distf = 7.3", col = "green", cex = 0.7)
 
 <center>Figura 3 - Uma distribuição hipotética de machos (m1 a m10) e fêmea (F) no espaço. A probabilidade de seleção dos machos está representada pelo tamanho da fonte. Ao lado direito se encontra a cachoeira, que se correlaciona com a probabilidade de seleção. Neste exemplo, o macho "m10" foi escolhido e a sua distancia "distf" foi calculada.</center> 
 
-\
+## Parâmetros das simulações
 
 Além do efeito das características dos sapos, decidimos também investigar se a variação na <code>area</code> da cachoeira é relevante para o tempo até o início do amplexo. Como resultado, apresentamos então quatro simulações:
 
@@ -143,12 +147,34 @@ load("data/sim_Afix50.Rdata")
 load("data/sim_Afix100.Rdata")
 ```
 
-Para exemplificar, as primeiras linhas do dataset simulado com área variada:
+## Estrutura do resultado
 
+O *output* da simulação consiste em uma tabela com as seguintes colunas:
+
+* <code>machoid</code> - número de identificação do macho
+* <code>dcach</code> - distância do macho até a cachoeira
+* <code>foot</code> - taxa de _footflag_ do macho
+* <code>freq</code> - frequência de canto do macho
+* <code>tama</code> - tamanho corporal do macho
+* <code>footpad</code> - idem foot, padronizado
+* <code>freqpad</code> - idem freq, padronizado
+* <code>tamapad</code> - idem tama, padronizado
+* <code>exprlin</code> - expressão linear da regressão logistica
+* <code>prob</code> - probabilidade de seleção do macho
+* <code>distf</code> - distância da fêmea até o macho escolhido
+* <code>ttot</code> - tempo total entre até a escolha do macho <code>machoid</code>. Este tempo é definido como a soma das <code>distf</code> anteriores
+* <code>nsim</code> - número da simulação
+* <code>femea</code> - número de identificação da fêmea
+* <code>area</code> - tamanho de lado da cachoeira simulada
+* <code>femeasim</code> - agregação da informação de <code>nsim</code> e <code>femea</code>.
+
+
+Para exemplificar, apresentamos as primeiras linhas do dataset simulado com área variada:
 ```{r}
 head(sim_Avar)
 ```
 
+E o sumário de todas as simulações:
 
 <details>
 
@@ -178,14 +204,14 @@ summary(sim_Afix50)
 
   <summary>Sumário de sim_Afix100</summary>
 ```{r}
-summary(sim_Afix100) #arrumar dps pra rodar
+summary(sim_Afix100)
 ```
 </details>
 
 # Resultados
-Optamos pelo uso de modelos generalizados mistos, pois pode haver um efeito aleatório de cada rio (a variação entre rios pode ser maior do que a variação dentro de um mesmo rio). Além disso, optamos por utilizar a distribuição Gama, pois estamos interessados no tempo até a fêmea escolher um macho e iniciar o amplexo.
+Optamos pelo uso de modelos generalizados mistos, pois pode haver um efeito aleatório de cada rio (a variação entre rios pode ser maior do que a variação dentro de um mesmo rio). Além disso, optamos por utilizar a distribuição Gama, que é uma generalização da distribuição exponencial e é uma boa opção para modelar o tempo até N eventos ocorrerem. Esta distribuição possui dois parâmetros: shape ($k$) e scale ($\theta$). Como nossa variável é o tempo até um determinado macho atingir amplexo, a distribuição Gammma é apropriada.
 
-A distribuição Gamma é uma generalização da distribuição exponencial e é uma boa opção para modelar o tempo até N eventos ocorrerem. Esta distribuição possui dois parâmetros: shape ($k$) e scale ($\theta$). Como nossa variável é o tempo até um determinado macho atingir amplexo, a distribuição Gammma é apropriada. É frequente que os GLMM Gamma sejam difíceis de implementar, especialmente utilizando a função de ligação canônica <code>"inverse"</code> (Bolker at al 2022). Por esse motivo, alguns autores, como Lo e Andrews (2015) indicam utilizar a função de ligação <code>"log"</code>, a qual utilizaremos aqui.
+É frequente que os GLMM Gama sejam difíceis de implementar, especialmente utilizando a função de ligação canônica <code>"inverse"</code> (Bolker at al 2022). Por esse motivo, alguns autores, como Lo e Andrews (2015) indicam utilizar a função de ligação <code>"log"</code>, a qual utilizaremos aqui.
 
 Os seguintes pacotes foram utilizados para as análises estatísticas e plotagem:
 
@@ -300,6 +326,13 @@ plotConf(glmm10.4)
 plot_tendencia(dados = sim_Afix10, modelo = glmm10.4)
 ```
 
+### Diagnósticos do modelo
+
+```{r}
+plot(glmm10.4)
+```
+
+
 ## Área fixa em 50
 
 ### Análise exploratória
@@ -372,7 +405,7 @@ aictab(cand.set=models50, modnames=model.names50)
 ### Modelo mínimo adequado
 
 <details>
-<summary>Sumário dos modelos plausíveis</summary>
+<summary>Sumário do modelo mínimo adequado</summary>
 ```{r}
 # Sumário do melhor modelo
 summary(glmm50.1)
@@ -387,6 +420,13 @@ plotConf(glmm50.1)
 ```{r fig.align= 'center', fig.width=8, fig.height=8}
 # Plot da curva de tendência
 plot_tendencia(dados = sim_Afix50, modelo = glmm50.1)
+```
+
+### Diagnósticos do modelo
+
+```{r}
+plot(glmm50.1)
+
 ```
 
 ## Área fixa em 100
@@ -479,6 +519,12 @@ plotConf(glmm100.2)
 ```{r fig.align= 'center', fig.width=8, fig.height=8}
 # Plot da curva de tendência de um dos modelos selecionados
 plot_tendencia(dados = sim_Afix100, modelo = glmm100.2)
+```
+
+### Diagnósticos do modelo
+
+```{r}
+plot(glmm100.2)
 ```
 
 ## Simulação com área variável
@@ -587,6 +633,12 @@ plotConf(glmmvar.2)
 plot_tendencia(dados = sim_Avar, modelo = glmmvar.2)
 ```
 
+### Diagnósticos do modelo
+
+```{r}
+plot(glmmvar.2)
+```
+
 # Discussão
 
 Neste estudo, exploramos como sinais multi-modais influenciam o tempo até o início do amplexo na rã-de-corredeira. Três variáveis preditoras foram consideradas na composição do sinal multi-modal: frequência dominante (DF), tamanho corporal e taxa de *foot-flagging*. Esperávamos uma relação positiva entre tempo até o amplexo e frequência dominante, porém uma relação negativa entre tempo até o amplexo e tamanho corporal e taxa de *foot-flagging*. Após criarmos sistemas que simulam riachos de diferentes tamanhos com a probabilidade de fêmeas escolhererem machos associada a estes sinais multi-modais, utilizamos GLMMs com distribuição Gama para testar se esses modelos convergem bem aos parâmetros utilizados durante a simulação. Abaixo, discutimos a interpretação biológica dos resultados, o efeito do tamanho das cachoeiras de área fixa (10, 50 e 100) e variável, se os coeficientes verdadeiros (utilizados na simulação) convergem com aqueles estimados pelos GLMMs e quais as limitações do nosso estudo. 
@@ -599,7 +651,8 @@ Biologicamente, a interação estatística entre nossas variáveis aleatórias p
 
 ## Comparação de coeficientes
 
-Para comparar os modelos plausíveis com as simulações, apresentamos na tabela abaixo os coeficientes colocados nas simulações e os encontrados pelos modelos selecionados pelo $\Delta AIC$. Com exceção da área fixa de 50, nota-se que mais de um modelo foi escolhido por área, pois seguimos o critério de que o modelo mais plausível é aquele com $\Delta AIC$ < 2. Em caso de empate, consideramos que os modelos selecionados cuja diferença de AIC é menor do que 2 são igualmente plausíveis. Em cinza escuro estão as linhas de input da simulação e abaixo delas nos modelos plausíveis para cada variação na área. Os modelos plausíveis são apresentados em ordem de $\Delta AIC$ crescente.
+Seguimos o critério de que um modelo é definitivamente mais plausível se tem $\Delta AIC$ < 2. Em caso de empate, consideramos que os modelos selecionados cuja diferença de AIC é menor do que 2 são igualmente plausíveis. Com exceção da área fixa de 50, nota-se que mais de um modelo foi escolhido por área.
+Para comparar os modelos plausíveis com as simulações, apresentamos na tabela abaixo os coeficientes colocados nas simulações e os encontrados pelos modelos selecionados pelo critério de $AIC$. Em cinza escuro estão as linhas de input da simulação e abaixo delas nos modelos plausíveis para cada variação na área. Os modelos plausíveis são apresentados em ordem de $\Delta AIC$ crescente.
 \
 \
 <center>Tabela 1 - Coeficientes utilizados em cada simulação (cinza escuro) e obtidos pelos modelos ajustados (branco)</center>
@@ -657,10 +710,10 @@ Quanto aos coeficientes de interação, todos tem magnitude de efeito pequena, o
 
 ## Limitações dos modelos
 
-Como já dito, o ajuste dos modelos com a função de ligação canônica não foi possível, uma vez que nos modelos mais complexos resultava em erro. Por isso, optamos pela função de ligação log. Essa opção pode ter gerado algumas das diferenças observadas entre a simulação e os previstos pelo modelo. Como exemplo desta diferença, mostramos novamente as curvas previstas para o modelo de área 100. A função de ligação log permite o formato da curva apenas crescente, no entanto a função de ligação logística permitiria o formato de "S" mais adequado aos dados.
+Como já dito, o ajuste dos modelos com a função de ligação canônica não foi possível, uma vez que nos modelos mais complexos resultava em erro. Por isso, optamos pela função de ligação log. Essa opção pode ter gerado algumas das diferenças observadas entre a simulação e os previstos pelo modelo. Como exemplo desta diferença, mostramos novamente as curvas previstas para o modelo de área 100. A função de ligação log permite o formato da curva apenas crescente ou decrescente, no entanto a função de ligação logística permitiria o formato de "S" mais adequado aos dados.
 
 ```{r fig.align= 'center', fig.width=8, fig.height=8}
-plot_tendencia(dados = sim_Afix100, modelo = glmm100.2)
+plot_tendencia(dados = sim_Afix100, modelo = glmm100.1)
 ```
 
 
