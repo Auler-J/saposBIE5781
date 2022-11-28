@@ -202,13 +202,15 @@ library(AICcmodavg) # Model Selection and Multimodel Inference Based on (Q)AIC(c
 library(ggplot2) # Create Elegant Data Visualisations Using the Grammar of Graphics
 library(ggeffects) # Create Tidy Data Frames of Marginal Effects for 'ggplot' from Model Outputs
 library(gridExtra) # Miscellaneous Functions for "Grid" Graphics
+library(DT) # A Wrapper of the JavaScript Library 'DataTables'
+library(boot) # Diagnostics plots
 ```
 
 ## Área fixa em 10
 
 ### Análise exploratória
 
-```{r fig.align = 'center'}
+```{r fig.align = 'center', fig.width=8, fig.height=8}
 AED(sim_Afix10, binw = 3)
 ```
 
@@ -289,12 +291,12 @@ summary(glmm10.4)
 </details>
 
 ```{r}
-# Plota 95% CI
+# Plota 95% CI de um dos melhores modelos
 plotConf(glmm10.4)
 ```
 
-```{r}
-# Plota linhas de tendência
+```{r fig.align= 'center', fig.width=8, fig.height=8}
+# Plota linhas de tendência de um dos melhores modelos
 plot_tendencia(dados = sim_Afix10, modelo = glmm10.4)
 ```
 
@@ -302,7 +304,7 @@ plot_tendencia(dados = sim_Afix10, modelo = glmm10.4)
 
 ### Análise exploratória
 
-```{r fig.align= 'center'}
+```{r fig.align= 'center', fig.width=8, fig.height=8}
 AED(sim_Afix50, binw = 70)
 ```
 
@@ -369,15 +371,20 @@ aictab(cand.set=models50, modnames=model.names50)
 
 ### Modelo mínimo adequado
 
+<details>
+<summary>Sumário dos modelos plausíveis</summary>
 ```{r}
 # Sumário do melhor modelo
 summary(glmm50.1)
+```
+</details>
 
+```{r}
 # Plot 95% CI
 plotConf(glmm50.1)
 ```
 
-```{r}
+```{r fig.align= 'center', fig.width=8, fig.height=8}
 # Plot da curva de tendência
 plot_tendencia(dados = sim_Afix50, modelo = glmm50.1)
 ```
@@ -386,7 +393,7 @@ plot_tendencia(dados = sim_Afix50, modelo = glmm50.1)
 
 ### Análise exploratória
 
-```{r}
+```{r fig.align= 'center', fig.width=8, fig.height=8}
 AED(sim_Afix100, binw = 200)
 ```
 
@@ -455,23 +462,29 @@ aictab(cand.set=models100, modnames=model.names100)
 
 Os modelos 1 e 2 são igualmente plausíveis pois $\Delta AIC < 2$. O modelo 1 inclui todas as preditoras <code>tamapad</code>, <code>footpad</code>, <code>freqpad</code> e suas interações duplas e tripla. O modelo 2, por sua vez, não possui a interação tripla. Por ter menor AIC, apresentamos o modelo 2 em detalhes:
 
+<details>
+<summary>Sumário dos modelos plausíveis</summary>
 ```{r}
 # Sumário do melhor modelo
+summary(glmm100.1)
 summary(glmm100.2)
+```
+</details>
 
-# Plot 95% CI
+```{r}
+# Plot 95% CI de um dos modelos selecionados
 plotConf(glmm100.2)
 ```
 
-```{r}
-# Plot da curva de tendência
+```{r fig.align= 'center', fig.width=8, fig.height=8}
+# Plot da curva de tendência de um dos modelos selecionados
 plot_tendencia(dados = sim_Afix100, modelo = glmm100.2)
 ```
 
 ## Simulação com área variável
 
 ### Análise exploratória
-```{r}
+```{r fig.align= 'center', fig.width=8, fig.height=8}
 # Padroniza área
 sim_Avar$areapad = padroniza(sim_Avar$area)
 
@@ -491,7 +504,6 @@ glmmvar.full = glmer(ttot~tamapad*freqpad*footpad*areapad + (1|nsim), family=Gam
 # In checkConv(attr(opt, "derivs"), opt$par, ctrl = control$checkConv,  :
 #   Model failed to converge with max|grad| = 0.165652 (tol = 0.002, component 1)
 ```
-
 
 <details>
 
@@ -556,29 +568,38 @@ aictab(cand.set=modelsvar, modnames=model.namesvar)
 
 Os modelos 1 e 2 são igualmente plausíveis pois $\Delta AIC < 2$. O modelo 1 inclui todas as preditoras <code>tamapad</code>, <code>footpad</code>, <code>freqpad</code> e suas interações duplas e tripla. O modelo 2, por sua vez, não possui a interação tripla. Por ter menor AIC, apresentamos o modelo 2 em detalhes:
 
+<details>
+<summary>Sumário dos modelos plausíveis</summary>
 ```{r}
-# Sumario do melhor modelo
+# Sumário dos modelos selecionados
+summary(glmmvar.1)
 summary(glmmvar.2)
+```
+</details>
 
-# Plot 95% CI
+```{r}
+# Plot 95% CI de um dos modelos selecionados
 plotConf(glmmvar.2)
 ```
 
-```{r}
+```{r fig.align= 'center', fig.width=8, fig.height=8}
+# Plot de curva de tendência de um dos modelos selecionados
 plot_tendencia(dados = sim_Avar, modelo = glmmvar.2)
 ```
 
-
 # Discussão
 
-Pacotes utilizados
-```{r message=FALSE, warning=FALSE}
-library(DT) # A Wrapper of the JavaScript Library 'DataTables'
-```
+Neste estudo, exploramos como sinais multi-modais influenciam o tempo até o início do amplexo na rã-de-corredeira. Três variáveis preditoras foram consideradas na composição do sinal multi-modal: frequência dominante (DF), tamanho corporal e taxa de *foot-flagging*. Esperávamos uma relação positiva entre tempo até o amplexo e frequência dominante, porém uma relação negativa entre tempo até o amplexo e tamanho corporal e taxa de *foot-flagging*. Após criarmos sistemas que simulam riachos de diferentes tamanhos com a probabilidade de fêmeas escolhererem machos associada a estes sinais multi-modais, utilizamos GLMMs com distribuição Gama para testar se esses modelos convergem bem aos parâmetros utilizados durante a simulação. Abaixo, discutimos a interpretação biológica dos resultados, o efeito do tamanho das cachoeiras de área fixa (10, 50 e 100) e variável, se os coeficientes verdadeiros (utilizados na simulação) convergem com aqueles estimados pelos GLMMs e quais as limitações do nosso estudo. 
+
+## O efeito dos sinais multi-modais sobre o tempo
+
+Para todas as áreas (fixa em 10, 50 e 100, e variável), nossos resultados indicam que modelos com dupla e/ou tripla interação entre os sinais acústico, visual e morfológico são sempre selecionados. Embora a interação entre os coeficientes não tenha sido explicitamente considerada na simulação da seleção de machos pelas fêmeas, estas interações emergem nos GLMMs utilizando a distribuição Gama.
+
+Biologicamente, a interação estatística entre nossas variáveis aleatórias pode ser interpretada como um sinal multi-modal, ou seja, a informação sobre a qualidade do macho é composta por diferentes sub-conjuntos de sinais que interagem entre si para influenciar o tempo até o amplexo. Especificamente, três sinais podem fazer parte do sinal multi-modal em nosso sistema: acústico, visual e morfológico. A frequência dominante é o sinal acústico que atrai as fêmeas que estão longe, sendo que uma grande quantidade de energia dos machos é gasta diariamente para bombear o ar durante o canto (Wells 2007). Contudo, conforme elas se aproximam dos rios, outros sinais possivelmente são importantes para informar a qualidade do macho: o tamanho corporal (morfologia) e o *foot-flagging* (sinais visuais).
 
 ## Comparação de coeficientes
 
-Para comparar os modelos plausíveis com as simulações, apresentamos na tabela abaixo os coeficientes colocados nas simulações e os encontrados pelos modelos. Em cinza escuro estão as linhas de input da simulação e abaixo delas nos modelos plausíveis para cada variação na área. Os modelos plausíveis são apresentados em ordem de $\Delta AIC$ crescente.
+Para comparar os modelos plausíveis com as simulações, apresentamos na tabela abaixo os coeficientes colocados nas simulações e os encontrados pelos modelos selecionados pelo $\Delta AIC$. Com exceção da área fixa de 50, nota-se que mais de um modelo foi escolhido por área, pois seguimos o critério de que o modelo mais plausível é aquele com $\Delta AIC$ < 2. Em caso de empate, consideramos que os modelos selecionados cuja diferença de AIC é menor do que 2 são igualmente plausíveis. Em cinza escuro estão as linhas de input da simulação e abaixo delas nos modelos plausíveis para cada variação na área. Os modelos plausíveis são apresentados em ordem de $\Delta AIC$ crescente.
 \
 \
 <center>Tabela 1 - Coeficientes utilizados em cada simulação (cinza escuro) e obtidos pelos modelos ajustados (branco)</center>
@@ -628,14 +649,17 @@ formatStyle("(Intercept)",
   backgroundColor = styleEqual(c(0, 1), c(rgb(0.8, 0.8, 0.8, 0.5), 'white')))
 ```
 
-Apesar de o intercepto de todos as simulações ser $0$, observamos que todos os modelos ajustados possuem valores de intercepto positivos, e que este valor aumenta conforme o aumento da área. Quanto aos coeficientes de tamanho, e de frequência, os coeficientes ajustados possuem mesmo sinal (negativo e positivo, respectivamente) que os simulados, porém com magnitude menor do que a esperada. O coeficiente da taxa de *footflag*, por sua vez, tem magnitude menor do que a esperada e sinal contrário ao simulado. É possível notar também que, apesar da variação em área, o valor dos coeficientes entre simulações é bastante parecido, o que é compatível com o simulado.
+Apesar de o intercepto de todos as simulações ser $0$, observamos que todos os modelos ajustados possuem valores de intercepto positivos, e que este valor aumenta conforme o aumento da área. Quanto aos coeficientes de tamanho, e de frequência, os coeficientes ajustados possuem mesmo sinal (negativo e positivo, respectivamente) que os simulados, porém com magnitude menor do que a esperada. O coeficiente da taxa de *foot-flagging*, por sua vez, tem magnitude menor do que a esperada e sinal contrário ao simulado. Interessantemente, a taxa de *foot-flagging* foi o único parâmetro simulado a partir de uma distribuição Poisson, ao passo que a frequência dominante e tamanho corporal foram simuladas com uma distribuição Gaussiana. 
+
+É possível notar também que, apesar da variação em área, o valor dos coeficientes entre simulações é bastante parecido, o que é compatível com o simulado. Sob uma abordagem frequentista, observa-se que os valores de p da maioria dos coeficientes dos modelos selecionados são menores do que 0.05 e portanto podem ser interpretados como *significativos*. Sob uma abordagem de modelos, esses coeficientes apresentam intervalos de confiança que não se sobrepõem com zero.
+
 Quanto aos coeficientes de interação, todos tem magnitude de efeito pequena, o que é condizente com a simulação pois estes efeitos não foram incluídos. Mesmo assim, o ajuste de modelos demonstra que as interações duplas são essenciais para entender os modelos, e as interações triplas podem ou não melhorar o ajuste do modelo. Este fato pode ser explicado pois todas as características são correlacionadas com a distância do macho até a cachoeira, e portanto as características podem ser correlacionadas entre si. 
 
 ## Limitações dos modelos
 
-Como já dito, o ajuste dos modelos com a função de ligação canônica foi possível, uma vez que nos modelos mais complexos resultava em erro. Por isso, optamos pela função de ligação log. Essa opção pode ter gerado algumas das diferenças observadas entre a simulação e os previstos pelo modelo. Como exemplo desta diferença, mostramos novamente as curvas previstas para o modelo de área 100. A função de ligação log permite o formato da curva apenas crescente, no entanto a função de ligação logística permitiria o formato de "S" mais adequado aos dados.
+Como já dito, o ajuste dos modelos com a função de ligação canônica não foi possível, uma vez que nos modelos mais complexos resultava em erro. Por isso, optamos pela função de ligação log. Essa opção pode ter gerado algumas das diferenças observadas entre a simulação e os previstos pelo modelo. Como exemplo desta diferença, mostramos novamente as curvas previstas para o modelo de área 100. A função de ligação log permite o formato da curva apenas crescente, no entanto a função de ligação logística permitiria o formato de "S" mais adequado aos dados.
 
-```{r}
+```{r fig.align= 'center', fig.width=8, fig.height=8}
 plot_tendencia(dados = sim_Afix100, modelo = glmm100.2)
 ```
 
