@@ -236,7 +236,7 @@ library(boot) # Diagnostics plots
 
 ### Análise exploratória
 
-```{r fig.align = 'center', fig.width=8, fig.height=8}
+```{r fig.align = 'center', fig.width=6, fig.height=6}
 AED(sim_Afix10, binw = 3)
 ```
 
@@ -314,19 +314,19 @@ summary(glmm10.1)
 ```
 </details>
 
-```{r}
+```{r fig.align= 'center', fig.width=6, fig.height=6}
 # Plota 95% CI do melhor modelo
 plotConf(glmm10.1)
 ```
 
-```{r fig.align= 'center', fig.width=8, fig.height=8}
+```{r fig.align= 'center', fig.width=8, fig.height=4}
 # Plota linhas de tendência de um dos melhores modelos
 plot_tendencia(dados = sim_Afix10, modelo = glmm10.1)
 ```
 
 ### Diagnósticos do modelo
 
-```{r fig.align= 'center', fig.width=8, fig.height=8}
+```{r fig.align= 'center', fig.width=4, fig.height=4}
 plot(glmm10.1)
 ```
 
@@ -335,7 +335,7 @@ plot(glmm10.1)
 
 ### Análise exploratória
 
-```{r fig.align= 'center', fig.width=8, fig.height=8}
+```{r fig.align= 'center', fig.width=6, fig.height=6}
 AED(sim_Afix50, binw = 70)
 ```
 
@@ -413,19 +413,19 @@ summary(glmm50.2)
 ```
 </details>
 
-```{r}
+```{r fig.align= 'center', fig.width=6, fig.height=6}
 # Plot 95% CI
 plotConf(glmm50.1)
 ```
 
-```{r fig.align= 'center', fig.width=8, fig.height=8}
+```{r fig.align= 'center', fig.width=8, fig.height=4}
 # Plot da curva de tendência
 plot_tendencia(dados = sim_Afix50, modelo = glmm50.1)
 ```
 
 ### Diagnósticos do modelo
 
-```{r fig.align= 'center', fig.width=8, fig.height=8}
+```{r fig.align= 'center', fig.width=4, fig.height=4}
 plot(glmm50.1)
 ```
 
@@ -433,7 +433,7 @@ plot(glmm50.1)
 
 ### Análise exploratória
 
-```{r fig.align= 'center', fig.width=8, fig.height=8}
+```{r fig.align= 'center', fig.width=6, fig.height=6}
 AED(sim_Afix100, binw = 200)
 ```
 
@@ -511,26 +511,26 @@ summary(glmm100.2)
 ```
 </details>
 
-```{r}
+```{r fig.align= 'center', fig.width=6, fig.height=6}
 # Plot 95% CI de um dos modelos selecionados
 plotConf(glmm100.2)
 ```
 
-```{r fig.align= 'center', fig.width=8, fig.height=8}
+```{r fig.align= 'center', fig.width=8, fig.height=4}
 # Plot da curva de tendência de um dos modelos selecionados
 plot_tendencia(dados = sim_Afix100, modelo = glmm100.2)
 ```
 
 ### Diagnósticos do modelo
 
-```{r fig.align= 'center', fig.width=8, fig.height=8}
+```{r fig.align= 'center', fig.width=4, fig.height=4}
 plot(glmm100.2)
 ```
 
 ## Simulação com área variável
 
 ### Análise exploratória
-```{r fig.align= 'center', fig.width=8, fig.height=8}
+```{r fig.align= 'center', fig.width=6, fig.height=6}
 # Padroniza área
 sim_Avar$areapad = padroniza(sim_Avar$area)
 
@@ -623,19 +623,19 @@ summary(glmmvar.2)
 ```
 </details>
 
-```{r}
+```{r fig.align= 'center', fig.width=6, fig.height=6}
 # Plot 95% CI de um dos modelos selecionados
 plotConf(glmmvar.1)
 ```
 
-```{r fig.align= 'center', fig.width=8, fig.height=8}
+```{r fig.align= 'center', fig.width=8, fig.height=4}
 # Plot de curva de tendência de um dos modelos selecionados
 plot_tendencia(dados = sim_Avar, modelo = glmmvar.1)
 ```
 
 ### Diagnósticos do modelo
 
-```{r fig.align= 'center', fig.width=8, fig.height=8}
+```{r fig.align= 'center', fig.width=4, fig.height=4}
 plot(glmmvar.1)
 ```
 
@@ -687,7 +687,7 @@ cftab = data.frame(sim10, cfglmm10.1,
                    simvar, cfglmmvar.1, cfglmmvar.2)
 names(cftab) = gsub(pattern = "cf", replacement = "", x = names(cftab))
 names(cftab) = gsub(pattern = "sim", replacement = "sim_Afix", x = names(cftab))
-names(cftab)[10] = "sim_Avar"
+names(cftab)[9] = "sim_Avar"
 rownames(cftab) = gsub(pattern = "pad", replacement = "", x = rownames(cftab))
 
 cftab = t(cftab)
@@ -711,13 +711,13 @@ Quanto aos coeficientes de interação, todos tem magnitude de efeito pequena, o
 
 Como já dito, o ajuste dos modelos com a função de ligação canônica não foi possível, uma vez que nos modelos mais complexos resultava em erro. Por isso, optamos pela função de ligação log. Essa opção pode ter gerado algumas das diferenças observadas entre a simulação e os previstos pelo modelo. Como exemplo desta diferença, mostramos novamente as curvas previstas para o modelo de área 100. A função de ligação log permite o formato da curva apenas crescente ou decrescente, no entanto a função de ligação logística permitiria o formato de "S" mais adequado aos dados.
 
-```{r fig.align= 'center', fig.width=8, fig.height=8}
+```{r fig.align= 'center', fig.width=8, fig.height=4}
 plot_tendencia(dados = sim_Afix100, modelo = glmm100.2)
 ```
 
 Dentre as curvas de tendências das diferentes áreas, podemos perceber que a curva da simulação com área variável é a que mais se afasta dos dados simulados. Essa discrepância é compreensível, uma vez que existe uma variabilidade muito maior nos dados.
 
-```{r fig.align= 'center', fig.width=8, fig.height=8}
+```{r fig.align= 'center', fig.width=8, fig.height=4}
 plot_tendencia(dados = sim_Avar, modelo = glmmvar.1)
 ```
 
@@ -726,13 +726,12 @@ plot_tendencia(dados = sim_Avar, modelo = glmmvar.1)
 
 Todos os plots de diagnóstico apresentam formato parecido: Os resíduos são muito mais variáveis nos valores ajustados menores e depois se afunilam. Possivelmente, o formato dos resíduos também pode ser explicado pela função de ligação escolhida, que não permitiu flexibilidade ao modelo.
 
-```{r}
-par(mfrow = c(2,2))
-plot(glmm10.1, main = "glmm10.1")
-plot(glmm50.1, main = "glmm50.1")
-plot(glmm100.2, main = "glmm100.2")
-plot(glmmvar.1, main = "glmmvar.1")
-par(mfrow = c(1,1))
+```{r fig.align= 'center', fig.width=6, fig.height=6}
+grid.arrange(
+  plot(glmm10.1, main = "glmm10.1"),
+  plot(glmm50.1, main = "glmm50.1"),
+  plot(glmm100.2, main = "glmm100.2"),
+  plot(glmmvar.1, main = "glmmvar.1"), nrow = 2)
 ```
 
 

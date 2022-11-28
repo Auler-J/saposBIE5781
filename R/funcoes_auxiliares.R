@@ -107,7 +107,7 @@ plot_tendencia = function(dados, modelo){
     scale_color_gradient(low = "darkseagreen1", high = "darkslategrey") +
     xlab("\nFrequência dominante (Hz)\n(padronizada)") +
     ylab("Tempo até início da cópula\n") +
-    geom_line(aes(y = pred$pfreq), size = 1, color = "black", linetype="dashed")
+    geom_line(aes(y = pred$pfreq), linewidth = 1, color = "black", linetype="dashed")
   
   ## 1.2 Tempo ate amplexo vs SVL
   p2 = ggplot(dados, aes(tamapad, ttot, color=tamapad)) +
@@ -116,7 +116,7 @@ plot_tendencia = function(dados, modelo){
     scale_color_gradient(low = "darkseagreen1", high = "darkslategrey") +
     xlab("\nTamanho corporal (mm)\n(padronizado)") +
     ylab("Tempo até início da cópula\n") +
-    geom_line(aes(y = pred$ptama), size = 1, color = "black", linetype="dashed")
+    geom_line(aes(y = pred$ptama), linewidth = 1, color = "black", linetype="dashed")
   
   ## 1.3 Tempo ate amplexo vs taxa de foot-flagging
   p3 = ggplot(dados, aes(footpad, ttot, color=footpad)) +
@@ -125,7 +125,7 @@ plot_tendencia = function(dados, modelo){
     scale_color_gradient(low = "darkseagreen1", high = "darkslategrey") +
     xlab("\nTaxa de foot-flagging\n(n eventos/min) (padronizada)") +
     ylab("Tempo até início da cópula\n") +
-    geom_line(aes(y = pred$pfoot), size = 1, color = "black", linetype="dashed")
+    geom_line(aes(y = pred$pfoot), linewidth = 1, color = "black", linetype="dashed")
   grid.arrange(p1, p2, p3, nrow = 1)
 }
 
