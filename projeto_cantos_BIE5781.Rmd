@@ -302,34 +302,32 @@ model.names10 = c("glmm10.1", "glmm10.2", "glmm10.3", "glmm10.4", "glmm10.5", "g
 aictab(cand.set=models10, modnames=model.names10, refit=FALSE)
 ```
 
-### Modelos plausíveis
-Neste cenário, os modelos 1, 2 e 4 são igualmente plausíveis, uma vez que $\Delta AIC < 2$. Estes modelos tem em comum todas as três variáveis sem interação, e variam nas interações duplas e tripla que não possuem. A seguir, mostramos o sumário de todos esses modelos. Dentre todos os modelos, o tem menor valor de AIC e por esse motivo, concentraremos a análise neste. 
+### Modelos mínimo adequado
+Neste cenário, o modelo 1 foi selecionado. Este modelo tem todas as três variáveis e suas interações. 
 \
 
 <details>
-<summary>Sumário dos modelos plausíveis</summary>
+<summary>Sumário do melhor modelo</summary>
 ```{r}
 # Sumário do melhor modelo
 summary(glmm10.1)
-summary(glmm10.2)
-summary(glmm10.4)
 ```
 </details>
 
 ```{r}
-# Plota 95% CI de um dos melhores modelos
-plotConf(glmm10.4)
+# Plota 95% CI do melhor modelo
+plotConf(glmm10.1)
 ```
 
 ```{r fig.align= 'center', fig.width=8, fig.height=8}
 # Plota linhas de tendência de um dos melhores modelos
-plot_tendencia(dados = sim_Afix10, modelo = glmm10.4)
+plot_tendencia(dados = sim_Afix10, modelo = glmm10.1)
 ```
 
 ### Diagnósticos do modelo
 
-```{r}
-plot(glmm10.4)
+```{r fig.align= 'center', fig.width=8, fig.height=8}
+plot(glmm10.1)
 ```
 
 
@@ -402,13 +400,16 @@ model.names50 = gsub("10", "50", model.names10)
 aictab(cand.set=models50, modnames=model.names50)
 ```
 
-### Modelo mínimo adequado
+### Modelos plausíveis
+
+Neste cenário, os modelos 1 e 2 foram considerados igualmente plausíveis pois possuem $\Delta AIC > 2$. Estes modelos diferem apenas na presença da interação tripla <code>tamapad:freqpad:footpad</code>. Por simplicidade, focamos as figuras apresentadas no modelo de menor AIC.
 
 <details>
-<summary>Sumário do modelo mínimo adequado</summary>
+<summary>Sumário dos modelos plausíveis</summary>
 ```{r}
 # Sumário do melhor modelo
 summary(glmm50.1)
+summary(glmm50.2)
 ```
 </details>
 
@@ -424,9 +425,8 @@ plot_tendencia(dados = sim_Afix50, modelo = glmm50.1)
 
 ### Diagnósticos do modelo
 
-```{r}
+```{r fig.align= 'center', fig.width=8, fig.height=8}
 plot(glmm50.1)
-
 ```
 
 ## Área fixa em 100
@@ -523,7 +523,7 @@ plot_tendencia(dados = sim_Afix100, modelo = glmm100.2)
 
 ### Diagnósticos do modelo
 
-```{r}
+```{r fig.align= 'center', fig.width=8, fig.height=8}
 plot(glmm100.2)
 ```
 
@@ -612,7 +612,7 @@ aictab(cand.set=modelsvar, modnames=model.namesvar)
 
 ### Modelos plausíveis
 
-Os modelos 1 e 2 são igualmente plausíveis pois $\Delta AIC < 2$. O modelo 1 inclui todas as preditoras <code>tamapad</code>, <code>footpad</code>, <code>freqpad</code> e suas interações duplas e tripla. O modelo 2, por sua vez, não possui a interação tripla. Por ter menor AIC, apresentamos o modelo 2 em detalhes:
+Os modelos 1 e 2 são igualmente plausíveis pois $\Delta AIC < 2$. O modelo 1 inclui todas as preditoras <code>tamapad</code>, <code>footpad</code>, <code>freqpad</code> e suas interações duplas e tripla. O modelo 2, por sua vez, não possui a interação tripla. Por ter menor AIC, apresentamos o modelo 1 em detalhes:
 
 <details>
 <summary>Sumário dos modelos plausíveis</summary>
@@ -625,18 +625,18 @@ summary(glmmvar.2)
 
 ```{r}
 # Plot 95% CI de um dos modelos selecionados
-plotConf(glmmvar.2)
+plotConf(glmmvar.1)
 ```
 
 ```{r fig.align= 'center', fig.width=8, fig.height=8}
 # Plot de curva de tendência de um dos modelos selecionados
-plot_tendencia(dados = sim_Avar, modelo = glmmvar.2)
+plot_tendencia(dados = sim_Avar, modelo = glmmvar.1)
 ```
 
 ### Diagnósticos do modelo
 
-```{r}
-plot(glmmvar.2)
+```{r fig.align= 'center', fig.width=8, fig.height=8}
+plot(glmmvar.1)
 ```
 
 # Discussão
@@ -651,7 +651,7 @@ Biologicamente, a interação estatística entre nossas variáveis aleatórias p
 
 ## Comparação de coeficientes
 
-Seguimos o critério de que um modelo é definitivamente mais plausível se tem $\Delta AIC$ < 2. Em caso de empate, consideramos que os modelos selecionados cuja diferença de AIC é menor do que 2 são igualmente plausíveis. Com exceção da área fixa de 50, nota-se que mais de um modelo foi escolhido por área.
+Seguimos o critério de que um modelo é definitivamente mais plausível se tem $\Delta AIC$ < 2. Em caso de empate, consideramos que os modelos selecionados cuja diferença de AIC é menor do que 2 são igualmente plausíveis. Com exceção da área fixa de 10, nota-se que mais de um modelo foi escolhido por área.
 Para comparar os modelos plausíveis com as simulações, apresentamos na tabela abaixo os coeficientes colocados nas simulações e os encontrados pelos modelos selecionados pelo critério de $AIC$. Em cinza escuro estão as linhas de input da simulação e abaixo delas nos modelos plausíveis para cada variação na área. Os modelos plausíveis são apresentados em ordem de $\Delta AIC$ crescente.
 \
 \
@@ -659,33 +659,32 @@ Para comparar os modelos plausíveis com as simulações, apresentamos na tabela
 ```{r echo=FALSE}
 #extrai coeficientes dos modelos plausiveis de cada area
 sim10 = c(cfsim_Afix10, rep(NA, times = 4))
-cfglmm10.4 = c(summary(glmm10.4)$coefficients[,1], NA, NA)
-cfglmm10.2 = c(summary(glmm10.2)$coefficients[,1], NA)
 cfglmm10.1 = summary(glmm10.1)$coefficients[,1]
 
 sim50 = c(cfsim_Afix50, rep(NA, times = 4))
 cfglmm50.1 = summary(glmm50.1)$coefficients[,1]
+cfglmm50.2 = c(summary(glmm10.2)$coefficients[,1], NA)
+
 
 sim100 = c(cfsim_Afix100, rep(NA, times = 4))
 cfglmm100.2 = c(summary(glmm100.2)$coefficients[,1], NA)
 cfglmm100.1 = summary(glmm100.1)$coefficients[,1]
 
 simvar = c(cfsim_Avar, rep(NA, times = 4))
-cfglmmvar.2 = c(summary(glmmvar.2)$coefficients[,1], NA)
 cfglmmvar.1 = summary(glmmvar.1)$coefficients[,1]
+cfglmmvar.2 = c(summary(glmmvar.2)$coefficients[,1], NA)
 
 #como ha modelos sem alguns coeficientes, preciso adicionar eles como NA no vetor para fazer uma tabela
 colnames = attributes(summary(glmm10.1)$coefficients)$dimnames[[1]]
-names(cfglmm10.4)[c(7,8)] = c(colnames[!colnames %in% names(cfglmm10.4)])
-names(cfglmm10.2)[8] = "tamapad:freqpad:footpad"
+names(cfglmm50.2)[8] = "tamapad:freqpad:footpad"
 names(cfglmm100.2)[8] = "tamapad:freqpad:footpad"
 names(cfglmmvar.2)[8] = "tamapad:freqpad:footpad"
 
-#e ordenar para ficar igual aos outros
-cfglmm10.4 = cfglmm10.4[colnames]
-
 #fazer tabela e mudar nomes
-cftab = data.frame(sim10, cfglmm10.4, cfglmm10.2, cfglmm10.1, sim50, cfglmm50.1, sim100, cfglmm100.2, cfglmm100.1, simvar, cfglmmvar.2, cfglmmvar.1)
+cftab = data.frame(sim10, cfglmm10.1, 
+                   sim50, cfglmm50.1, cfglmm50.2,
+                   sim100, cfglmm100.2, cfglmm100.1, 
+                   simvar, cfglmmvar.1, cfglmmvar.2)
 names(cftab) = gsub(pattern = "cf", replacement = "", x = names(cftab))
 names(cftab) = gsub(pattern = "sim", replacement = "sim_Afix", x = names(cftab))
 names(cftab)[10] = "sim_Avar"
@@ -713,7 +712,27 @@ Quanto aos coeficientes de interação, todos tem magnitude de efeito pequena, o
 Como já dito, o ajuste dos modelos com a função de ligação canônica não foi possível, uma vez que nos modelos mais complexos resultava em erro. Por isso, optamos pela função de ligação log. Essa opção pode ter gerado algumas das diferenças observadas entre a simulação e os previstos pelo modelo. Como exemplo desta diferença, mostramos novamente as curvas previstas para o modelo de área 100. A função de ligação log permite o formato da curva apenas crescente ou decrescente, no entanto a função de ligação logística permitiria o formato de "S" mais adequado aos dados.
 
 ```{r fig.align= 'center', fig.width=8, fig.height=8}
-plot_tendencia(dados = sim_Afix100, modelo = glmm100.1)
+plot_tendencia(dados = sim_Afix100, modelo = glmm100.2)
+```
+
+Dentre as curvas de tendências das diferentes áreas, podemos perceber que a curva da simulação com área variável é a que mais se afasta dos dados simulados. Essa discrepância é compreensível, uma vez que existe uma variabilidade muito maior nos dados.
+
+```{r fig.align= 'center', fig.width=8, fig.height=8}
+plot_tendencia(dados = sim_Avar, modelo = glmmvar.1)
+```
+
+
+## Diagnósticos dos modelos
+
+Todos os plots de diagnóstico apresentam formato parecido: Os resíduos são muito mais variáveis nos valores ajustados menores e depois se afunilam. Possivelmente, o formato dos resíduos também pode ser explicado pela função de ligação escolhida, que não permitiu flexibilidade ao modelo.
+
+```{r}
+par(mfrow = c(2,2))
+plot(glmm10.1, main = "glmm10.1")
+plot(glmm50.1, main = "glmm50.1")
+plot(glmm100.2, main = "glmm100.2")
+plot(glmmvar.1, main = "glmmvar.1")
+par(mfrow = c(1,1))
 ```
 
 

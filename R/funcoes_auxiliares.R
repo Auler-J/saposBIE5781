@@ -129,57 +129,6 @@ plot_tendencia = function(dados, modelo){
   grid.arrange(p1, p2, p3, nrow = 1)
 }
 
-# plot_tendencia_glm = function(dados, modlog, modinv){
-#   
-#   coeflog = summary(modlog)$coefficients[1:4,1]
-#   ptamalog = dados$tamapad*coeflog["tamapad"] + coeflog["(Intercept)"]
-#   pfreqlog = dados$freqpad*coeflog["freqpad"] + coeflog["(Intercept)"]
-#   pfootlog = dados$footpad*coeflog["footpad"] + coeflog["(Intercept)"]
-#   predlinlog = data.frame(ptamalog, pfreqlog, pfootlog)
-#   predlog = exp(predlinlog)
-#   
-#   coefinv = summary(modinv)$coefficients[1:4,1]
-#   ptamainv = dados$tamapad*coefinv["tamapad"] + coefinv["(Intercept)"]
-#   pfreqinv = dados$freqpad*coefinv["freqpad"] + coefinv["(Intercept)"]
-#   pfootinv = dados$footpad*coefinv["footpad"] + coefinv["(Intercept)"]
-#   predlininv = data.frame(ptamainv, pfreqinv, pfootinv)
-#   predinv = 1/(predlininv)
-#   
-#   
-#   # 1. Scatter Plots
-#   
-#   ## 1.1 Tempo ate amplexo vs DF
-#   p1 = ggplot(dados, aes(freqpad, ttot, color=freqpad)) +
-#     geom_point(shape=16, size=.05, show.legend=F, alpha = .5) +
-#     theme_minimal() +
-#     scale_color_gradient(low = "darkseagreen1", high = "darkslategrey") +
-#     xlab("\nFrequência dominante (Hz)\n(padronizada)") +
-#     ylab("Tempo até início da cópula\n") +
-#     geom_line(aes(y = predlog$pfreq), size = 1, color = "black", linetype="dashed") +
-#     geom_line(aes(y = predinv$pfreq), size = 1, color = "red", linetype="dashed")
-#   
-#   ## 1.2 Tempo ate amplexo vs SVL
-#   p2 = ggplot(dados, aes(tamapad, ttot, color=tamapad)) +
-#     geom_point(shape=16, size=.05, show.legend=F, alpha = .5) +
-#     theme_minimal() +
-#     scale_color_gradient(low = "darkseagreen1", high = "darkslategrey") +
-#     xlab("\nTamanho corporal (mm)\n(padronizado)") +
-#     ylab("Tempo até início da cópula\n") +
-#     geom_line(aes(y = predlog$ptama), size = 1, color = "black", linetype="dashed") +
-#     geom_line(aes(y = predinv$ptama), size = 1, color = "red", linetype="dashed")
-#   
-#   ## 1.3 Tempo ate amplexo vs taxa de foot-flagging
-#   p3 = ggplot(dados, aes(footpad, ttot, color=footpad)) +
-#     geom_point(shape=16, size=.2, show.legend=F, alpha = .5) +
-#     theme_minimal() +
-#     scale_color_gradient(low = "darkseagreen1", high = "darkslategrey") +
-#     xlab("\nTaxa de foot-flagging\n(n eventos/min) (padronizada)") +
-#     ylab("Tempo até início da cópula\n") +
-#     geom_line(aes(y = predlog$pfoot), size = 1, color = "black", linetype="dashed") +
-#     geom_line(aes(y = predinv$pfoot), size = 1, color = "red", linetype="dashed")
-#   grid.arrange(p1, p2, p3, nrow = 1)
-# }
-
 #plot for 95% confidence interval
 plotConf = function(model){
   # Dataframe with 95% confidence intervals
@@ -196,19 +145,3 @@ plotConf = function(model){
   xlab("\nIntervalos de confiança (95%)")+
   geom_vline(xintercept=0, colour="red")
 }
-
-
-# plotDiag = function(modelo){
-#   colvec = #ff1111"
-#     p1 = plot(modelo,type=c("p","smooth"))
-#     p2 = plot(modelo,sqrt(abs(resid(.)))~fitted(.),
-#                     col=colvec,
-#                     type=c("p","smooth"),ylab=expression(sqrt(abs(resid))))
-#     p3 = plot(modelo,resid(.,type="pearson")~footpad,
-#                     type=c("p","smooth"))
-#     re<-ranef(modelo,condVar = TRUE)[[1]]
-#     p4 = qqmath(~re);
-#     abline(0,1)
-#     
-#     grid.arrange(p1, p2, p3)#, p4)
-# }
